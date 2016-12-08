@@ -2,6 +2,7 @@
 
 ## How to use:
 `1.` Create addon/plugin inside WHMCS modules directory, for example "plugin-name"
+
 `2.` Create file "plugin-name.php" inside "plugin-name" directory
 ```php
 return Module::registerModuleByFile(__FILE__, [
