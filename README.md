@@ -7,7 +7,7 @@
 ```php
 return Module::registerModuleByFile(__FILE__, [
     'name'        => 'Plugin Name',
-    'description' => 'Proxmox Name description',
+    'description' => 'Plugin description',
     'version'     => '1.0',
     'author'      => 'And <and@e.mail>'
 ]);
