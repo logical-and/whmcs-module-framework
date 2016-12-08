@@ -23,9 +23,9 @@ ClassesHooks::registerHooks([
 or 
 ```php
 CallbackHook::attachCallback('InvoiceCreation', 0, function() {
-        // Do your things here
+    // Do your things here
 });
 CallbackHook::attachCallback(Invoice\InvoiceCreated::KEY, 0, function() {
-        // Do your things here
+    // Do your things here
 });
 ```
