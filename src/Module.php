@@ -105,7 +105,7 @@ class Module
         return $this->id;
     }
 
-    public function getConfig()
+    public function getConfig($key = null, $default = null)
     {
         if (!$this->config) {
             // Set original config values
@@ -125,7 +125,13 @@ class Module
             }
         }
 
-        return $this->config;
+        return !$key ? $this->config : (isset($this->config[$key]) ? $this->config[$key] : $default);
+    }
+
+    public function getOriginalConfig($key = null, $default = null)
+    {
+        return !$key ? $this->originalConfig :
+            (isset($this->originalConfig[$key]) ? $this->originalConfig[$key] : $default);
     }
 
     public function getDirectory()
