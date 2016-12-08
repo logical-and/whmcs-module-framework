@@ -123,6 +123,8 @@ class Module
                 $row                         = json_decode(json_encode($row), true);
                 $config[ $row[ 'setting' ] ] = html_entity_decode($row[ 'value' ]);
             }
+
+            $this->config = $config;
         }
 
         return !$key ? $this->config : (isset($this->config[$key]) ? $this->config[$key] : $default);
