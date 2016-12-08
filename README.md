@@ -22,12 +22,10 @@ ClassesHooks::registerHooks([
 
 or 
 ```php
-ClassesHooks::registerHooks([
-    CallbackHook::attachCallback('InvoiceCreation', 0, function() {
+CallbackHook::attachCallback('InvoiceCreation', 0, function() {
         // Do your things here
-    }),
-    CallbackHook::attachCallback(Invoice\InvoiceCreated::KEY, 0, function() {
+});
+CallbackHook::attachCallback(Invoice\InvoiceCreated::KEY, 0, function() {
         // Do your things here
-    })
-]);
+});
 ```
