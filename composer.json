@@ -1,0 +1,11 @@
+{
+    "name": "and/whmcs-module-framework",
+    "description": "Mini framework or even utilites bunch",
+    "minimum-stability": "alpha",
+    "version": "0.5",
+    "autoload": {
+        "psr-4": {
+            "WHMCS\\Module\\Framework\\": "src/"
+        }
+    }
+}
