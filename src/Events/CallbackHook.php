@@ -22,7 +22,9 @@ class CallbackHook extends AbstractHookListener
 
     public function setCallback(callable $callback)
     {
+        $this->callback = $callback;
 
+        return $this;
     }
 
     protected function execute(array $args)
