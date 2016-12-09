@@ -3,6 +3,9 @@
     "description": "WHMCS mini framework for module/plugin (+ some utilites bunch)",
     "minimum-stability": "alpha",
     "version": "0.5",
+    "require": {
+        "axelarge/array-tools": "@dev"
+    },
     "autoload": {
         "psr-4": {
             "WHMCS\\Module\\Framework\\": "src/"

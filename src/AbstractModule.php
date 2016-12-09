@@ -2,6 +2,7 @@
 
 namespace WHMCS\Module\Framework;
 
+use Axelarge\ArrayTools\Arr;
 use ErrorException;
 use Illuminate\Database\Capsule\Manager;
 use WHMCS\Module\Framework\Events\AbstractModuleListener;
@@ -183,13 +184,12 @@ abstract class AbstractModule
             $this->config = $config;
         }
 
-        return !$key ? $this->config : (isset($this->config[$key]) ? $this->config[$key] : $default);
+        return !$key ? $this->config : Arr::getNested($this->config, $key, $default);
     }
 
     public function getOriginalConfig($key = null, $default = null)
     {
-        return !$key ? $this->originalConfig :
-            (isset($this->originalConfig[$key]) ? $this->originalConfig[$key] : $default);
+        return !$key ? $this->originalConfig : Arr::getNested($this->originalConfig, $key, $default);
     }
 
     public function getDirectory()
