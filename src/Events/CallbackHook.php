@@ -10,7 +10,7 @@ class CallbackHook extends AbstractHookListener
     public static function attachCallback($name, $priority, callable $callback)
     {
         $instance = new static();
-        $instance->setEvent($name);
+        $instance->setName($name);
         $instance->setCallback($callback);
 
         if ($priority) {
@@ -27,7 +27,7 @@ class CallbackHook extends AbstractHookListener
         return $this;
     }
 
-    protected function execute(array $args)
+    protected function execute(array $args = null)
     {
         return call_user_func($this->callback, $args);
     }

@@ -3,10 +3,11 @@
 namespace WHMCS\Module\Framework\Events;
 
 use ErrorException;
+use WHMCS\Module\Framework\Helper;
 
 abstract class AbstractListener
 {
-    protected $event;
+    protected $name;
 
     protected $priority = 0;
 
@@ -17,7 +18,7 @@ abstract class AbstractListener
         return new static();
     }
 
-    abstract protected function execute(array $args);
+    abstract protected function execute(array $args = null);
 
     abstract public function register();
 
@@ -26,25 +27,25 @@ abstract class AbstractListener
      *
      * @return string
      */
-    public function getEvent()
+    public function getName()
     {
-        return $this->event;
+        return $this->name;
     }
 
     /**
      * Set event
 
-     *
-*@param string $event
+*
+*@param string $name
      * @return $this
      * @throws ErrorException
      */
-    public function setEvent($event)
+    public function setName($name)
     {
-        if (!empty(trim((string) $event))) {
+        if (empty(trim((string) $name))) {
             throw new ErrorException('Hook name cannot be empty!');
         }
-        $this->event = $event;
+        $this->name = $name;
 
         return $this;
     }
@@ -75,5 +76,17 @@ abstract class AbstractListener
     public function callHandler(array $args)
     {
         return $this->execute($args);
+    }
+
+    // --- Shortcuts
+
+    public function db()
+    {
+        return Helper::db();
+    }
+
+    public function api($method, array $data)
+    {
+        return Helper::api($method, $data);
     }
 }

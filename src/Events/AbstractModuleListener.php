@@ -25,7 +25,7 @@ abstract class AbstractModuleListener extends AbstractListener
     public function register()
     {
         if (!$this->registered) {
-            if (!trim((string) $this->event)) {
+            if (!trim((string) $this->name)) {
                 throw new ErrorException("Hook name is not defined");
             }
 
@@ -33,24 +33,28 @@ abstract class AbstractModuleListener extends AbstractListener
                 throw new ErrorException("Module is not defined");
             }
 
-            // Wrapper
-            $fn = function ($args) {
-                call_user_func_array([$this, 'execute'], $args);
-            };
-            // Proper context
-            $fn->bind($fn, $this);
+            $fnName = $this->module->getId() . '_' . $this->name;
 
-            // Share variable by REQUEST global variable
-            $uid = '$' . uniqid('', true);
-            $_REQUEST[$uid] = $fn;
+            if (!function_exists($fnName)) {
+                // Wrapper
+                $fn = function ($args) {
+                    call_user_func_array([$this, 'execute'], $args);
+                };
+                // Proper context
+                $fn->bind($fn, $this);
 
-            // Attach to function body
-            eval(sprintf(
-                'function %s() { $_REQUEST["%s"](func_get_args()); }',
-                $this->module->getId() . '_' . $this->event, $uid
-            ));
+                // Share variable by REQUEST global variable
+                $uid = '$' . uniqid('', true);
+                $_REQUEST[$uid] = $fn;
 
-            $this->registered = true;
+                // Attach to function body
+                eval(sprintf(
+                    'function %s() { $_REQUEST["%s"](func_get_args()); }',
+                    $this->module->getId() . '_' . $this->name, $uid
+                ));
+
+                $this->registered = true;
+            }
         }
     }
 }

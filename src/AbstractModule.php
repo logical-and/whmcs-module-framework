@@ -4,6 +4,7 @@ namespace WHMCS\Module\Framework;
 
 use ErrorException;
 use Illuminate\Database\Capsule\Manager;
+use WHMCS\Module\Framework\Events\AbstractModuleListener;
 
 abstract class AbstractModule
 {
@@ -112,6 +113,29 @@ abstract class AbstractModule
         return $this;
     }
 
+    public function registerModuleListeners($classes = [])
+    {
+        foreach ($classes as $class) {
+            if (is_string($class)) {
+                /** @var AbstractModuleListener $instance */
+                $instance = new $class();
+            }
+            else {
+                $instance = $class;
+            }
+
+            $abstractParent = AbstractModuleListener::class;
+            if (!$instance instanceof $abstractParent) {
+                throw new ErrorException(sprintf('Class "%s" should be inherited from "%s" class',
+                    $class, AbstractModuleListener::class));
+            }
+
+            $instance->setModule($this)->register();
+        }
+
+        return $this;
+    }
+
     /**
      * Called only once
      */
@@ -121,15 +145,6 @@ abstract class AbstractModule
     {
         if (!function_exists($name)) {
             eval(sprintf('function %s() { return %s; }', $name, var_export($config, true)));
-        }
-
-        return $this;
-    }
-
-    protected function registerFunction($name, callable $callback)
-    {
-        if (!function_exists($name)) {
-            eval(sprintf('function %s() use (&$callback) { call_user_func_array($callback, func_get_args()); }', $name));
         }
 
         return $this;
