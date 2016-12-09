@@ -2,20 +2,15 @@
 
 namespace WHMCS\Module\Framework\Events;
 
-class CallbackHook extends AbstractHookListener
+class CallbackModuleListener extends AbstractModuleListener
 {
-
     protected $callback;
 
-    public static function attachCallback($name, $priority, callable $callback)
+    public static function attachCallback($name, callable $callback)
     {
         $instance = new static();
         $instance->setEvent($name);
         $instance->setCallback($callback);
-
-        if ($priority) {
-            $instance->setPriority($priority);
-        }
 
         return $instance->register();
     }

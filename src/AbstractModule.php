@@ -119,9 +119,17 @@ abstract class AbstractModule
 
     protected function registerConfigFunction($name, array $config)
     {
-        var_dump($name, $config);
         if (!function_exists($name)) {
             eval(sprintf('function %s() { return %s; }', $name, var_export($config, true)));
+        }
+
+        return $this;
+    }
+
+    protected function registerFunction($name, callable $callback)
+    {
+        if (!function_exists($name)) {
+            eval(sprintf('function %s() use (&$callback) { call_user_func_array($callback, func_get_args()); }', $name));
         }
 
         return $this;
