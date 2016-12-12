@@ -38,7 +38,7 @@ abstract class AbstractModuleListener extends AbstractListener
             if (!function_exists($fnName)) {
                 // Wrapper
                 $fn = function ($args) {
-                    call_user_func_array([$this, 'execute'], $args);
+                    return call_user_func_array([$this, 'execute'], $args);
                 };
                 // Proper context
                 $fn->bind($fn, $this);
@@ -49,7 +49,7 @@ abstract class AbstractModuleListener extends AbstractListener
 
                 // Attach to function body
                 eval(sprintf(
-                    'function %s() { $_REQUEST["%s"](func_get_args()); }',
+                    'function %s() { return $_REQUEST["%s"](func_get_args()); }',
                     $this->module->getId() . '_' . $this->name, $uid
                 ));
 
