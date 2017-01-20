@@ -82,7 +82,7 @@ abstract class AbstractListener
 
     public function db()
     {
-        return Helper::db();
+        return Helper::conn();
     }
 
     public function api($method, array $data)

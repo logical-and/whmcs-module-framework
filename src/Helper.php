@@ -2,6 +2,7 @@
 
 namespace WHMCS\Module\Framework;
 
+use Axelarge\ArrayTools\Arr;
 use ErrorException;
 use /** @noinspection PhpUndefinedClassInspection */
     /** @noinspection PhpUndefinedNamespaceInspection */
@@ -9,6 +10,8 @@ use /** @noinspection PhpUndefinedClassInspection */
 
 class Helper
 {
+    protected static $defaultFetchMode;
+
     public static function api($method, array $data = [])
     {
         $preparedMethod = strtolower($method);
@@ -22,6 +25,26 @@ class Helper
         $data = localApi($preparedMethod, $preparedData, self::getAdminUser());
 
         return $data;
+    }
+
+    public static function apiResponse($method, array $data, $keyToCheck,
+        $message = 'Wrong response - %s (request - "%s", args - %s)',
+        $exceptionClass = ErrorException::class)
+    {
+        $response = self::api($method, $data);
+
+        // Key=value
+        if (false !== strpos($keyToCheck, '=')) {
+            list($keyToCheck, $valueToCheck) = explode('=', $keyToCheck);
+        }
+
+        $foundValue = Arr::getNested($response, $keyToCheck);
+
+        if (is_null($foundValue) or (isset($valueToCheck) and $valueToCheck != $foundValue)) {
+            throw new $exceptionClass(sprintf($message, json_encode($response), $method, json_encode($data)));
+        }
+
+        return $response;
     }
 
     public static function dumpAsJson($var)
@@ -56,6 +79,28 @@ class Helper
     public static function db()
     {
         /** @noinspection PhpUndefinedClassInspection */
-        return Manager::connection();
+        $conn = Manager::connection();
+
+        if (!empty(self::$defaultFetchMode)) {
+            $conn->setFetchMode(self::$defaultFetchMode);
+        }
+        else {
+            self::$defaultFetchMode = $conn->getFetchMode();
+        }
+
+        return $conn;
+    }
+
+    public static function conn($fetchMode = \PDO::FETCH_ASSOC)
+    {
+        $conn = self::db();
+        $conn->setFetchMode($fetchMode);
+
+        return $conn;
+    }
+
+    public static function restoreDb()
+    {
+        self::db();
     }
 }
