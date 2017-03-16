@@ -13,9 +13,20 @@ abstract class AbstractListener
 
     protected $registered = false;
 
+    protected static $enabled = true;
+
     public static function build()
     {
         return new static();
+    }
+
+    protected function preExecute(array $args = null)
+    {
+        if (!static::$enabled) {
+            return false;
+        }
+
+        return true;
     }
 
     abstract protected function execute(array $args = null);
@@ -76,6 +87,18 @@ abstract class AbstractListener
     public function callHandler(array $args)
     {
         return $this->execute($args);
+    }
+
+    // --- Global settings
+
+    public static function enable()
+    {
+        static::$enabled = true;
+    }
+
+    public static function disable()
+    {
+        static::$enabled = false;
     }
 
     // --- Shortcuts

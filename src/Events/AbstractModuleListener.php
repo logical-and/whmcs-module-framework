@@ -7,6 +7,8 @@ use WHMCS\Module\Framework\AbstractModule;
 
 abstract class AbstractModuleListener extends AbstractListener
 {
+    public static $shared = [];
+
     /** @var AbstractModule */
     protected $module;
 
@@ -35,25 +37,36 @@ abstract class AbstractModuleListener extends AbstractListener
 
             $fnName = $this->module->getId() . '_' . $this->name;
 
+            // Wrapper
+            $fn = function ($args) {
+                // Break the chain
+                if (false === call_user_func_array([$this, 'preExecute'], $args)) {
+                    return true;
+                }
+
+                return call_user_func_array([$this, 'execute'], $args);
+            };
+            // Proper context
+            $fn->bind($fn, $this);
+            self::$shared[$fnName][] = $fn;
+
+            $this->registered = true;
+
+            // Define main hook function at once
             if (!function_exists($fnName)) {
-                // Wrapper
-                $fn = function ($args) {
-                    return call_user_func_array([$this, 'execute'], $args);
-                };
-                // Proper context
-                $fn->bind($fn, $this);
-
-                // Share variable by REQUEST global variable
-                $uid = '$' . uniqid('', true);
-                $_REQUEST[$uid] = $fn;
-
                 // Attach to function body
                 eval(sprintf(
-                    'function %s() { return $_REQUEST["%s"](func_get_args()); }',
-                    $this->module->getId() . '_' . $this->name, $uid
+                    'function %s() { 
+                        $id = "%s";
+                        $class = "%s";
+                        if (!empty($class::$shared[$id])) {
+                            foreach ($class::$shared[$id] as $cb) {
+                                $cb(func_get_args());
+                            }
+                        }
+                     }',
+                    $fnName, $fnName, self::class
                 ));
-
-                $this->registered = true;
             }
         }
     }
