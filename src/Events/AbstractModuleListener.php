@@ -60,9 +60,14 @@ abstract class AbstractModuleListener extends AbstractListener
                         $id = "%s";
                         $class = "%s";
                         if (!empty($class::$shared[$id])) {
+                            $response = null;
                             foreach ($class::$shared[$id] as $cb) {
-                                $cb(func_get_args());
+                                $ret = $cb(func_get_args());
+                                
+                                if (!is_null($ret)) $response = $ret;
                             }
+                            
+                            return $response;
                         }
                      }',
                     $fnName, $fnName, self::class
