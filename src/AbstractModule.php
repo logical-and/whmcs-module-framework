@@ -61,7 +61,7 @@ abstract class AbstractModule
         foreach (self::$instances as $type => $instances)
         {
             foreach ($instances as $instance) {
-                if ($file == $instance->getFile()) {
+                if (str_replace('\\', '/', $file) == str_replace('\\', '/', $instance->getFile())) {
                     return $instance;
                 }
             }
