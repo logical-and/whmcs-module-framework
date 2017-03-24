@@ -19,6 +19,9 @@ abstract class AbstractModuleListener extends AbstractListener
         return $this;
     }
 
+    /**
+     * @return AbstractModule
+     */
     public function getModule()
     {
         return $this->module;

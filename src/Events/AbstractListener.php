@@ -3,6 +3,7 @@
 namespace WHMCS\Module\Framework\Events;
 
 use ErrorException;
+use WHMCS\Module\Framework\AbstractModule;
 use WHMCS\Module\Framework\Helper;
 
 abstract class AbstractListener
@@ -20,7 +21,7 @@ abstract class AbstractListener
         return new static();
     }
 
-    protected function preExecute(array $args = null)
+    protected function preExecute()
     {
         if (!static::$enabled) {
             return false;
@@ -29,9 +30,14 @@ abstract class AbstractListener
         return true;
     }
 
-    abstract protected function execute(array $args = null);
+    abstract protected function execute();
 
     abstract public function register();
+
+    /**
+     * @return AbstractModule
+     */
+    abstract public function getModule();
 
     /**
      * Get event
@@ -86,6 +92,7 @@ abstract class AbstractListener
 
     public function callHandler(array $args)
     {
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
         return $this->execute($args);
     }
 
@@ -111,5 +118,10 @@ abstract class AbstractListener
     public function api($method, array $data)
     {
         return Helper::api($method, $data);
+    }
+
+    public function getUserId()
+    {
+        return $_SESSION['uid'];
     }
 }
