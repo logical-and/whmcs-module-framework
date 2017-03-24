@@ -15,7 +15,7 @@ return Module::registerModuleByFile(__FILE__, [
 `3.` Create "hooks.php" inside "plugin-name" directory
 
 ```php
-ClassesHooks::registerHooks([
+ModuleHooks::registerHooks([
     YourHookClass::class
 ]);
 ```
@@ -23,7 +23,7 @@ ClassesHooks::registerHooks([
 or 
 ```php
 CallbackHook::attachCallback('InvoiceCreation', 0, function() {
-    // Do your things here
+    echo $this->getModule()->getId();
 });
 CallbackHook::attachCallback(Invoice\InvoiceCreated::KEY, 0, function() {
     // Do your things here

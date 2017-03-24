@@ -5,6 +5,11 @@ namespace WHMCS\Module\Framework\Events\Iterator;
 use ErrorException;
 use WHMCS\Module\Framework\Events\AbstractHookListener;
 
+/**
+ * Class ClassesHooks
+ *
+ * @deprecated
+ */
 class ClassesHooks
 {
 
