@@ -16,7 +16,8 @@ return Module::registerModuleByFile(__FILE__, [
 
 ```php
 ModuleHooks::registerHooks([
-    YourHookClass::class
+    YourHookClass::class,
+    CallbackHook::createCallback('eventName', 0, function() {})
 ]);
 ```
 
