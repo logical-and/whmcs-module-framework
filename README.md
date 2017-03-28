@@ -24,6 +24,7 @@ or
 ```php
 CallbackHook::attachCallback('InvoiceCreation', 0, function() {
     echo $this->getModule()->getId();
+    echo $this->view('smarty.tpl', ['var' => 'value']);
 });
 CallbackHook::attachCallback(Invoice\InvoiceCreated::KEY, 0, function() {
     // Do your things here

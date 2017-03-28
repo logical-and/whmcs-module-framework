@@ -3,6 +3,7 @@
 namespace WHMCS\Module\Framework\Events;
 
 use ErrorException;
+use Smarty;
 use WHMCS\Module\Framework\AbstractModule;
 use WHMCS\Module\Framework\Helper;
 
@@ -123,5 +124,32 @@ abstract class AbstractListener
     public function getUserId()
     {
         return $_SESSION['uid'];
+    }
+
+    // --- Helpers
+
+    protected function view($template, array $vars = [], $dir = null)
+    {
+        global $templates_compiledir;
+
+        $smarty = new Smarty();
+        $smarty->compile_dir = $templates_compiledir;
+
+        foreach ($vars as $key => $value) {
+            $smarty->assign($key, $value);
+        }
+
+        // Render template
+        $templateDir = rtrim($dir ? $dir : $this->getTemplatesDir(), '/');
+        $rendered = $smarty->fetch("$templateDir/$template");
+
+        Helper::restoreDb();
+
+        return $rendered;
+    }
+
+    protected function getTemplatesDir()
+    {
+        return $this->getModule()->getDirectory() . "/templates";
     }
 }
