@@ -1,6 +1,6 @@
 <?php
 
-namespace WHMCS\Module\Blazing\DashboardProxy\Api;
+namespace WHMCS\Module\Framework\Api;
 
 use RuntimeException;
 
@@ -10,7 +10,8 @@ class APIFactory
     protected static $classes = [
         'orders'  => Orders::class,
         'billing' => Billing::class,
-        'system' => System::class
+        'system' => System::class,
+        'client' => Client::class
     ];
     protected static $classesCustom = [];
     protected static $instances = [];
@@ -20,7 +21,7 @@ class APIFactory
      */
     public static function orders()
     {
-        return self::getOrLoad('orders');
+        return self::getOrLoad(__FUNCTION__);
     }
 
     /**
@@ -28,7 +29,7 @@ class APIFactory
      */
     public static function billing()
     {
-        return self::getOrLoad('billing');
+        return self::getOrLoad(__FUNCTION__);
     }
 
     /**
@@ -36,7 +37,15 @@ class APIFactory
      */
     public static function system()
     {
-        return self::getOrLoad('system');
+        return self::getOrLoad(__FUNCTION__);
+    }
+
+    /**
+     * @return Client
+     */
+    public static function client()
+    {
+        return self::getOrLoad(__FUNCTION__);
     }
 
     protected static function getOrLoad($requestor)

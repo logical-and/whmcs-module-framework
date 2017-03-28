@@ -1,6 +1,6 @@
 <?php
 
-namespace WHMCS\Module\Blazing\DashboardProxy\Api;
+namespace WHMCS\Module\Framework\Api;
 
 use ArrayAccess;
 use Axelarge\ArrayTools\Arr;
@@ -19,6 +19,8 @@ class ArrayResult implements ArrayAccess, Iterator, Countable
     public function __construct(array $data, $resultPath = '', $apiMethod = '', array $apiArgs = [])
     {
         $this->data = $data;
+        $this->apiMethod = $apiMethod;
+        $this->apiArgs = $apiArgs;
 
         $resultPath = (string) $resultPath;
         if ($resultPath) {

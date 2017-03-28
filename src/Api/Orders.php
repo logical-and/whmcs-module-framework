@@ -1,6 +1,6 @@
 <?php
 
-namespace WHMCS\Module\Blazing\DashboardProxy\Api;
+namespace WHMCS\Module\Framework\Api;
 
 class Orders extends AbstractRequest
 {
@@ -26,5 +26,41 @@ class Orders extends AbstractRequest
         }
 
         return $this->response('getOrders', $args, 'orders.order');
+    }
+
+    public function getProduct($productId, $groupId = null, $module = null)
+    {
+        $args = [
+            'pid' => $productId
+        ];
+
+        if ($groupId) {
+            $args['gid'] = $groupId;
+        }
+
+        if ($module) {
+            $args['module'] = $module;
+        }
+
+        return $this->response('getProducts', $args, 'products.product.0');
+    }
+
+    public function getProducts($productIds = null, $groupId = null, $module = null)
+    {
+        $args = [];
+
+        if ($productIds) {
+            $args['id'] = $productIds;
+        }
+
+        if ($groupId) {
+            $args['gid'] = $groupId;
+        }
+
+        if ($module) {
+            $args['module'] = $module;
+        }
+
+        return $this->response('getProducts', $args, 'products.product.0');
     }
 }

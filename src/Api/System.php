@@ -1,6 +1,6 @@
 <?php
 
-namespace WHMCS\Module\Blazing\DashboardProxy\Api;
+namespace WHMCS\Module\Framework\Api;
 
 class System extends AbstractRequest
 {
