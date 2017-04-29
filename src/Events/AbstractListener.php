@@ -152,4 +152,9 @@ abstract class AbstractListener
     {
         return $this->getModule()->getDirectory() . "/templates";
     }
+
+    protected function getRelativeTemplatesDir()
+    {
+        return str_replace('\\', '/', str_replace(ROOTDIR, '', $this->getTemplatesDir()));
+    }
 }
