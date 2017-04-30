@@ -197,6 +197,11 @@ abstract class AbstractModule
         return $this->directory;
     }
 
+    public function getRelativeDirectory()
+    {
+        return str_replace('\\', '/', str_replace(ROOTDIR, '', $this->getDirectory()));
+    }
+
     public function getFile()
     {
         return $this->file;
