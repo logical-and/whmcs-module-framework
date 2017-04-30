@@ -5,6 +5,7 @@ namespace WHMCS\Module\Framework;
 class Server extends AbstractModule
 {
     const TYPE = 'server';
+    const TYPE_DIRECTORY = 'modules/servers';
 
     /**
      * Called only once

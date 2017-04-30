@@ -7,6 +7,7 @@ namespace WHMCS\Module\Framework;
 class Addon extends AbstractModule
 {
     const TYPE = 'addon';
+    const TYPE_DIRECTORY = 'modules/addons';
 
     /**
      * Called only once

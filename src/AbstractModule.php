@@ -10,6 +10,7 @@ use WHMCS\Module\Framework\Events\AbstractModuleListener;
 abstract class AbstractModule
 {
     const TYPE = 'abstract';
+    const TYPE_DIRECTORY = 'modules/abstract';
 
     /** @var AbstractModule[][] */
     protected static $instances = [];
@@ -42,11 +43,19 @@ abstract class AbstractModule
         return $instance ? $instance : new static($file, $config);
     }
 
-    public static function getInstanceById($id, $throw = true)
+    public static function getInstanceById($id, $throw = true, $load = true)
     {
         if (empty(self::$instances[static::TYPE][ $id ])) {
+            if ($load) {
+                $path = ROOTDIR . '/' . static::TYPE_DIRECTORY . "/$id/$id.php";
+                if (is_file($path)) {
+                    require_once $path;
+                    return self::getInstanceById($id, $throw, false);
+                }
+            }
+
             if ($throw) {
-                throw new ErrorException("Module with id \"$id\" and type " . static::TYPE . " wasn't loaded/initialized");
+                throw new ErrorException("Module with id \"$id\" and type " . static::TYPE . " has not been loaded/initialized");
             }
             else {
                 return false;
@@ -84,7 +93,7 @@ abstract class AbstractModule
         $id = pathinfo($file, PATHINFO_FILENAME);
 
         // prevent double registration
-        if (static::getInstanceById($id, false)) {
+        if (static::getInstanceById($id, false, false)) {
             throw new ErrorException("Module with id \"$id\" and type " . static::TYPE . " already loaded/initialized");
         }
 
