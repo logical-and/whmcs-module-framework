@@ -123,7 +123,7 @@ abstract class AbstractListener
 
     public function getUserId()
     {
-        return $_SESSION['uid'];
+        return !empty($_SESSION['uid']) ? $_SESSION['uid'] : false;
     }
 
     // --- Helpers
