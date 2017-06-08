@@ -4,7 +4,6 @@ namespace WHMCS\Module\Framework;
 
 use Axelarge\ArrayTools\Arr;
 use ErrorException;
-use Illuminate\Database\Capsule\Manager;
 use WHMCS\Module\Framework\Events\AbstractModuleListener;
 
 abstract class AbstractModule
@@ -29,6 +28,10 @@ abstract class AbstractModule
 
     /** @var string */
     protected $file;
+
+    /** @var array */
+    protected $cache = [];
+    protected static $staticCache = [];
 
     /**
      * @param string $file __FILE__
@@ -82,6 +85,13 @@ abstract class AbstractModule
         else {
             return false;
         }
+    }
+
+    public static function isModuleEnabled($id)
+    {
+        $module = static::getInstanceById($id, false, false);
+
+        return $module and $module->isEnabled();
     }
 
     public function __construct($file, array $config)
@@ -173,32 +183,17 @@ abstract class AbstractModule
 
     public function getConfig($key = null, $default = null)
     {
-        if (!$this->config) {
-            // Set original config values
-            $config[ 'original' ] = $this->originalConfig;
-            if (!empty($config[ 'original' ][ 'fields' ])) {
-                foreach ($config[ 'original' ][ 'fields' ] as $field => $data) {
-                    if (isset($data[ 'Default' ])) {
-                        $config[ $field ] = $data[ 'Default' ];
-                    }
-                }
-            }
-
-            $moduleName = $this->getId();
-            foreach (Manager::connection()->select("SELECT * FROM tbladdonmodules WHERE module = '$moduleName'") as $row) {
-                $row                         = json_decode(json_encode($row), true);
-                $config[ $row[ 'setting' ] ] = html_entity_decode($row[ 'value' ]);
-            }
-
-            $this->config = $config;
-        }
-
-        return !$key ? $this->config : Arr::getNested($this->config, $key, $default);
+        return $this->getOriginalConfig($key, $default);
     }
 
     public function getOriginalConfig($key = null, $default = null)
     {
         return !$key ? $this->originalConfig : Arr::getNested($this->originalConfig, $key, $default);
+    }
+
+    public function isEnabled()
+    {
+        return true;
     }
 
     public function getDirectory()
@@ -214,5 +209,31 @@ abstract class AbstractModule
     public function getFile()
     {
         return $this->file;
+    }
+
+    // --- Helpers
+
+    protected function getCachedResult($key, callable $callback)
+    {
+        $cacheId = md5(json_encode($key));
+
+        // Use cache if possible
+        if (isset($this->cache[ $cacheId ])) {
+            return $this->cache[ $cacheId ];
+        }
+
+        return $this->cache[ $cacheId ] = $callback();
+    }
+
+    protected static function getStaticCachedResult($key, callable $callback)
+    {
+        $cacheId = md5(json_encode($key));
+
+        // Use cache if possible
+        if (isset(self::$staticCache[ $cacheId ])) {
+            return self::$staticCache[ $cacheId ];
+        }
+
+        return self::$staticCache[ $cacheId ] = $callback();
     }
 }
