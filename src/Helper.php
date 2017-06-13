@@ -103,4 +103,15 @@ class Helper
     {
         self::db();
     }
+
+    /**
+     * Get WHMCS version
+     * @return float
+     */
+    public static function getWHMCSVersion()
+    {
+        global $CONFIG;
+
+        return (float) $CONFIG['Version'];
+    }
 }
