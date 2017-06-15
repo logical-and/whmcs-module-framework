@@ -50,8 +50,11 @@ class Addon extends AbstractModule
     public static function isModuleEnabled($id)
     {
         return self::getStaticCachedResult(static::TYPE . $id, function() use ($id) {
-            return !!Helper::conn()
+            $result = !!Helper::conn()
                 ->selectOne("SELECT count(*) as enabled FROM tbladdonmodules WHERE module = ?", [$id])['enabled'];
+            Helper::restoreDb();
+
+            return $result;
         });
     }
 }
