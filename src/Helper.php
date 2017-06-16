@@ -12,8 +12,16 @@ class Helper
 {
     protected static $defaultFetchMode;
 
-    public static function api($method, array $data = [])
+    public static function api($method, array $data = [], $workarounds = true)
     {
+        if ($workarounds) {
+            $response = WhmcsWorkarounds::apiCall($method, $data);
+
+            if (!is_null($response)) {
+                return $response;
+            }
+        }
+
         $preparedMethod = strtolower($method);
         $preparedData = [];
 
@@ -112,6 +120,11 @@ class Helper
     {
         global $CONFIG;
 
-        return (float) $CONFIG['Version'];
+        // Convert to true float
+        $version = $CONFIG['Version'];
+        $version = explode('.', $version);
+        $version = rtrim(($version[0] . '.' . join('', array_slice($version, 1))), '.');
+
+        return (float) $version;
     }
 }
