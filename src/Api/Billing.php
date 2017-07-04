@@ -41,4 +41,23 @@ class Billing extends AbstractRequest
             'description' => $description
         ]);
     }
+
+    public function addInvoicePayment($invoiceId, $transactionId, $gateway, $amount = null, $date = null, array $args = [])
+    {
+        $args = array_merge([
+            'invoiceId' => $invoiceId,
+            'transId' => $transactionId,
+            'gateway' => $gateway
+        ], $args);
+
+        if ($amount) {
+            $args['amount'] = $amount;
+        }
+
+        if ($date) {
+            $args['date'] = $date;
+        }
+
+        return $this->response('AddInvoicePayment', $args);
+    }
 }

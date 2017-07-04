@@ -41,11 +41,8 @@ class ArrayResult implements ArrayAccess, Iterator, Countable
         return !empty($this->result);
     }
 
-    public function validate(
-        $key,
-        $message = 'Wrong response - %s (request - "%s", args - %s)',
-        $exceptionClass = ResponseException::class
-    ) {
+    public function isValid($key)
+    {
         // Key=value
         if (false !== strpos($key, '=')) {
             list($key, $valueToCheck) = explode('=', $key);
@@ -54,6 +51,19 @@ class ArrayResult implements ArrayAccess, Iterator, Countable
         $foundValue = $this->offsetGet($key);
 
         if (is_null($foundValue) or (isset($valueToCheck) and $valueToCheck != $foundValue)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function validate(
+        $key,
+        $message = 'Wrong response - %s (request - "%s", args - %s)',
+        $exceptionClass = ResponseException::class
+    ) {
+
+        if (!$this->isValid($key)) {
             throw new $exceptionClass(sprintf($message, json_encode($this->data), $this->apiMethod,
                 json_encode($this->apiArgs)));
         }
