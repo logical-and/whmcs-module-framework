@@ -31,7 +31,16 @@ abstract class AbstractListener
         return true;
     }
 
+    /**
+     * @param array
+     * @return mixed
+     */
     abstract protected function execute();
+
+    protected function onExecuteException(\Exception $e)
+    {
+
+    }
 
     abstract public function register();
 

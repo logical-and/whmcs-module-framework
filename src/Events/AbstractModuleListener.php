@@ -42,12 +42,25 @@ abstract class AbstractModuleListener extends AbstractListener
 
             // Wrapper
             $fn = function ($args) {
-                // Break the chain
-                if (false === call_user_func_array([$this, 'preExecute'], $args)) {
-                    return true;
-                }
+                try {
+                    // Break the chain
+                    if (false === call_user_func_array([$this, 'preExecute'], $args)) {
+                        return true;
+                    }
 
-                return call_user_func_array([$this, 'execute'], $args);
+                    return call_user_func_array([$this, 'execute'], $args);
+                }
+                catch (\Exception $e) {
+                    /** @noinspection PhpVoidFunctionResultUsedInspection */
+                    $return = $this->onExecuteException($e);
+
+                    if (!is_null($return)) {
+                        return $return;
+                    }
+                    else {
+                        throw $e;
+                    }
+                }
             };
             // Proper context
             $fn->bind($fn, $this);

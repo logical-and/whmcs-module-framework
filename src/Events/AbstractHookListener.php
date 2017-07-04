@@ -21,13 +21,26 @@ abstract class AbstractHookListener extends AbstractListener
 
             /** @noinspection PhpUndefinedFunctionInspection */
             add_hook($this->name, $this->priority, function ($args) {
-                // Break the chain
-                if (false === $this->preExecute()) {
-                    /** @noinspection PhpInconsistentReturnPointsInspection */
-                    return;
-                }
+                try {
+                    // Break the chain
+                    if (false === $this->preExecute()) {
+                        /** @noinspection PhpInconsistentReturnPointsInspection */
+                        return;
+                    }
 
-                return $this->execute($args ? $args : []);
+                    return $this->execute($args ? $args : []);
+                }
+                catch (\Exception $e) {
+                    /** @noinspection PhpVoidFunctionResultUsedInspection */
+                    $return = $this->onExecuteException($e);
+
+                    if (!is_null($return)) {
+                        return $return;
+                    }
+                    else {
+                        throw $e;
+                    }
+                }
             });
 
             $this->registered = true;
