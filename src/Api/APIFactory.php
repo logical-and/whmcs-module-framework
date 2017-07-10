@@ -11,7 +11,8 @@ class APIFactory
         'orders'  => Orders::class,
         'billing' => Billing::class,
         'system' => System::class,
-        'client' => Client::class
+        'client' => Client::class,
+        'service' => Service::class,
     ];
     protected static $classesCustom = [];
     protected static $instances = [];
@@ -44,6 +45,14 @@ class APIFactory
      * @return Client
      */
     public static function client()
+    {
+        return self::getOrLoad(__FUNCTION__);
+    }
+
+    /**
+     * @return Service
+     */
+    public static function service()
     {
         return self::getOrLoad(__FUNCTION__);
     }
