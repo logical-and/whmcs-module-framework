@@ -10,8 +10,9 @@ class ModuleHooks
     public static function registerHooks($file, array $classes)
     {
         foreach ($classes as $class) {
+            /** @var AbstractHookListener $class */
             /** @var AbstractHookListener $instance */
-            $instance = is_string($class) ? new $class() : $class;
+            $instance = is_string($class) ? $class::getInstance() : $instance;
 
             $abstractParent = AbstractHookListener::class;
             if (!$instance instanceof $abstractParent) {

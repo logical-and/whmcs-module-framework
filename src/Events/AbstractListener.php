@@ -9,18 +9,38 @@ use WHMCS\Module\Framework\Helper;
 
 abstract class AbstractListener
 {
+    protected static $instances = [];
+
     protected $name;
-
     protected $priority = 0;
-
     protected $registered = false;
-
     protected $enabled = true;
 
+    // --- Builders
+
+    public static function getInstance()
+    {
+        $class = get_called_class();
+
+        if (empty(self::$instances[ $class ])) {
+            self::$instances[ $class ] = new static();
+        }
+
+        return self::$instances[ $class ];
+    }
+
+    protected function __construct() { }
+
+    /**
+     * @deprecated
+     * @return static
+     */
     public static function build()
     {
-        return new static();
+        return static::getInstance();
     }
+
+    // --- Handlers
 
     protected function preExecute()
     {
@@ -47,6 +67,8 @@ abstract class AbstractListener
     }
 
     abstract public function register();
+
+    // --- Accessors
 
     /**
      * @return AbstractModule

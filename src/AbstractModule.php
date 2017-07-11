@@ -136,13 +136,9 @@ abstract class AbstractModule
     public function registerModuleListeners($classes = [])
     {
         foreach ($classes as $class) {
-            if (is_string($class)) {
-                /** @var AbstractModuleListener $instance */
-                $instance = new $class();
-            }
-            else {
-                $instance = $class;
-            }
+            /** @var AbstractModuleListener $class */
+            /** @var AbstractModuleListener $instance */
+            $instance = is_string($class) ? $class::getInstance() : $instance;
 
             $abstractParent = AbstractModuleListener::class;
             if (!$instance instanceof $abstractParent) {
