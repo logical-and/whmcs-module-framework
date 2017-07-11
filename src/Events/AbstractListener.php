@@ -15,7 +15,7 @@ abstract class AbstractListener
 
     protected $registered = false;
 
-    protected static $enabled = true;
+    protected $enabled = true;
 
     public static function build()
     {
@@ -24,7 +24,11 @@ abstract class AbstractListener
 
     protected function preExecute()
     {
-        if (!static::$enabled) {
+        if (!$this->enabled) {
+            static::disable();
+        }
+
+        if (!static::isEnabled()) {
             return false;
         }
 
@@ -61,9 +65,8 @@ abstract class AbstractListener
 
     /**
      * Set event
-
-*
-*@param string $name
+     *
+     * @param string $name
      * @return $this
      * @throws ErrorException
      */
@@ -108,14 +111,31 @@ abstract class AbstractListener
 
     // --- Global settings
 
+    /** @noinspection PhpInconsistentReturnPointsInspection */
+    protected static function sharedVariable($key, $value = null)
+    {
+        static $vars = [];
+        if (!is_null($value)) {
+            $vars[$key] = $value;
+        }
+        else {
+            return isset($vars[$key]) ? $vars[$key] : null;
+        }
+    }
+
     public static function enable()
     {
-        static::$enabled = true;
+        static::sharedVariable('disabled', false);
     }
 
     public static function disable()
     {
-        static::$enabled = false;
+        static::sharedVariable('disabled', true);
+    }
+
+    public static function isEnabled()
+    {
+        return !static::sharedVariable('disabled');
     }
 
     // --- Shortcuts
