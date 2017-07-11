@@ -12,7 +12,7 @@ class ModuleHooks
         foreach ($classes as $class) {
             /** @var AbstractHookListener $class */
             /** @var AbstractHookListener $instance */
-            $instance = is_string($class) ? $class::getInstance() : $instance;
+            $instance = is_string($class) ? $class::getInstance() : $class;
 
             $abstractParent = AbstractHookListener::class;
             if (!$instance instanceof $abstractParent) {

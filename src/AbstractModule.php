@@ -138,7 +138,7 @@ abstract class AbstractModule
         foreach ($classes as $class) {
             /** @var AbstractModuleListener $class */
             /** @var AbstractModuleListener $instance */
-            $instance = is_string($class) ? $class::getInstance() : $instance;
+            $instance = is_string($class) ? $class::getInstance() : $class;
 
             $abstractParent = AbstractModuleListener::class;
             if (!$instance instanceof $abstractParent) {
