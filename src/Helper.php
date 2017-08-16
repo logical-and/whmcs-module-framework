@@ -127,4 +127,29 @@ class Helper
 
         return (float) $version;
     }
+
+    public static function getConfigValue($key, $default = null)
+    {
+        if (self::getWHMCSVersion() > 7) {
+            $result = Helper::api('GetConfigurationValue', ['setting' => $key], 'result=success');
+
+            // Request is successful, handle it
+            if (!empty($result['result']) and 'success' == $result['result']) {
+                // Data is found, return it
+                if (isset($result['value'])) {
+                    return $result['value'];
+                }
+
+                // Data not found return the default value
+                return $default;
+            }
+        }
+
+        $result = Helper::conn()->selectOne("SELECT value FROM tblconfiguration WHERE setting = ?", [$key]);
+        if (isset($result['value'])) {
+            return $result['value'];
+        }
+
+        return $default;
+    }
 }
