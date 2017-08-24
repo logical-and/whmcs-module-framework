@@ -61,3 +61,15 @@ Response is valid array, except you can use to get values path.with.dots (nested
 One thing - you can change (set/unset) values in array.
 
 Response by default relative by data container (for getInvoices it is **invoices.invoice**), but if you want to get data from root you should use path *data.rootResponseValue*
+
+## Page Hooks
+
+Methods to inject custom content to any page. Usage:
+
+```php
+AnyPageHook::buildInstance()->setPosition(AnyPageHook::POSITION_HEAD_BOTTOM)->setCodeCallback(function($vars) {
+    $page = $vars['templatefile'];
+
+    return "<meta page-template=\"$page\" />";
+})->apply()
+```

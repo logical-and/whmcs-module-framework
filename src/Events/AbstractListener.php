@@ -18,6 +18,9 @@ abstract class AbstractListener
 
     // --- Builders
 
+    /**
+     * @return static
+     */
     public static function getInstance()
     {
         $class = get_called_class();
