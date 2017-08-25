@@ -74,9 +74,7 @@ abstract class AbstractPageHook
             throw new ErrorException("No code generator is defined");
         }
 
-        $callbackHook = CallbackHook::getInstance()
-            ->setName($hook)
-            ->setPriority($this->priority);
+        $callbackHook = CallbackHook::createCallback($hook, $this->priority, function() {});
         $callback = $this->getExecutorCallback($hook, $this->templateName, $this->codeGenerator);
         $callback = $callback->bindTo($callbackHook);
         $callbackHook->setCallback($callback);
