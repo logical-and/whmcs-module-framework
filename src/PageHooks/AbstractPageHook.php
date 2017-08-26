@@ -4,6 +4,7 @@ namespace WHMCS\Module\Framework\PageHooks;
 
 use ErrorException;
 use WHMCS\Module\Framework\Events\CallbackHook;
+use WHMCS\Module\Framework\Helper;
 
 abstract class AbstractPageHook
 {
@@ -90,7 +91,8 @@ abstract class AbstractPageHook
 
     protected function getExecutorCallback($hook, $templateName, callable $codeGenerator)
     {
-        return function(array $vars) use ($templateName, $hook, $codeGenerator) {
+        $self = $this;
+        return function(array $vars) use ($templateName, $hook, $codeGenerator, $self) {
             if (empty($vars['templatefile'])) {
                 throw new ErrorException("Bad hook \"$hook\" result, no \"templatefile\" variable is passed");
             }
@@ -101,7 +103,79 @@ abstract class AbstractPageHook
                 return '';
             }
 
-            return call_user_func($codeGenerator, $vars);
+            $return = call_user_func($codeGenerator, $vars);
+
+            // Fix template if needed
+            if ($return) {
+                $self->fixTemplate($vars);
+            }
+
+            return $return;
         };
+    }
+
+    protected function fixTemplate(array $vars)
+    {
+        if (!empty($vars['templatefile'])) {
+            $template = $vars['templatefile'];
+        }
+        else {
+            return;
+        }
+        if (!empty($vars['template'])) {
+            $theme = $vars['template'];
+        }
+        else {
+            return;
+        }
+
+        $adjustements = [];
+        switch ($template) {
+            case 'viewinvoice':
+                $adjustements = [
+                    '{$headoutput}' => ['marker' => preg_quote('</head>'), 'position' => 'before'],
+                    '{$headeroutput}' => ['marker' => preg_quote('<body>'), 'position' => 'after'],
+                    '{$footeroutput}' => ['marker' => preg_quote('</body>'), 'position' => 'before'],
+                ];
+                break;
+        }
+
+        if (!$adjustements) {
+            return;
+        }
+
+        $path = Helper::getRootDir() . "/templates/$theme/$template.tpl";
+        $pathBackup = "$path.replacement-backup";
+        if (!file_exists($path)) {
+            return;
+        }
+        // No need to process more
+        if (file_exists($pathBackup)) {
+            return;
+        }
+
+        $content = file_get_contents($path);
+        foreach ($adjustements as $injection => $data) {
+            // Is not in the template
+            if (false === strpos($content, $injection)) {
+                $content = preg_replace(
+                    "~({$data['marker']})~",
+                    'before' == $data['position'] ? "$injection\n$1" : "$1\n$injection",
+                    $content,
+                    1,
+                    $replaced
+                );
+
+                if (!$replaced) {
+                    throw new ErrorException("Cannot inject variable \"$injection\" into \"$template\"");
+                }
+            }
+        }
+
+        // Make backup
+        copy($path, $pathBackup);
+        file_put_contents($path, $content);
+
+        // Ok, we're done
     }
 }

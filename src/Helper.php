@@ -152,4 +152,9 @@ class Helper
 
         return $default;
     }
+
+    public static function getRootDir()
+    {
+        return rtrim(ROOTDIR, '/');
+    }
 }

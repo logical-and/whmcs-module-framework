@@ -34,7 +34,7 @@ class WhmcsWorkarounds
             if (!function_exists("getClientsDetails")) {
                 /** @noinspection PhpUndefinedConstantInspection */
                 /** @noinspection PhpIncludeInspection */
-                require ROOTDIR . "/includes/clientfunctions.php";
+                require Helper::getRootDir() . "/includes/clientfunctions.php";
             }
 
             /** @noinspection PhpUndefinedFunctionInspection */

@@ -50,7 +50,7 @@ abstract class AbstractModule
     {
         if (empty(self::$instances[static::TYPE][ $id ])) {
             if ($load) {
-                $path = ROOTDIR . '/' . static::TYPE_DIRECTORY . "/$id/$id.php";
+                $path = Helper::getRootDir() . '/' . static::TYPE_DIRECTORY . "/$id/$id.php";
                 if (is_file($path)) {
                     require_once $path;
                     return self::getInstanceById($id, $throw, false);
@@ -199,7 +199,7 @@ abstract class AbstractModule
 
     public function getRelativeDirectory()
     {
-        return str_replace('\\', '/', str_replace(ROOTDIR, '', $this->getDirectory()));
+        return str_replace('\\', '/', str_replace(Helper::getRootDir(), '', $this->getDirectory()));
     }
 
     public function getFile()

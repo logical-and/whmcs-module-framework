@@ -209,6 +209,6 @@ abstract class AbstractListener
 
     protected function getRelativeTemplatesDir()
     {
-        return str_replace('\\', '/', str_replace(ROOTDIR, '', $this->getTemplatesDir()));
+        return str_replace('\\', '/', str_replace(Helper::getRootDir(), '', $this->getTemplatesDir()));
     }
 }
