@@ -35,6 +35,7 @@ class Addon extends AbstractModule
                 $row                         = json_decode(json_encode($row), true);
                 $config[ $row[ 'setting' ] ] = html_entity_decode($row[ 'value' ]);
             }
+            Helper::restoreDb();
 
             $this->config = $config;
         }
