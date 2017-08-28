@@ -150,7 +150,7 @@ abstract class AbstractPageHook
             return;
         }
         // No need to process more
-        if (file_exists($pathBackup)) {
+        if (file_exists($pathBackup) and (filemtime($pathBackup) > filemtime($path))) {
             return;
         }
 
@@ -173,8 +173,12 @@ abstract class AbstractPageHook
         }
 
         // Make backup
+        if (file_exists($pathBackup)) {
+            unlink($pathBackup);
+        }
         copy($path, $pathBackup);
         file_put_contents($path, $content);
+        touch($pathBackup);
 
         // Ok, we're done
     }
