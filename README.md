@@ -5,12 +5,13 @@
 
 `2.` Create file "plugin-name.php" inside "plugin-name" directory
 ```php
-return Module::registerModuleByFile(__FILE__, [
-    'name'        => 'Plugin Name',
-    'description' => 'Plugin description',
-    'version'     => '1.0',
-    'author'      => 'And <and@e.mail>'
-]);
+return Addon::registerModuleByFile(__FILE__,
+   Addon::configBuilder()
+   ->setName('My Plugin Friendly Name')
+   ->setDescription('description')
+   ->setAuthor('And')
+   ->addField(FieldConfigBuilder::dropdown('choice', 'Type')->addOption('One and only option', 'option1'))
+   ->build());
 ```
 `3.` Create "hooks.php" inside "plugin-name" directory
 

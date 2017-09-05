@@ -2,10 +2,20 @@
 
 namespace WHMCS\Module\Framework;
 
+use WHMCS\Module\Framework\ConfigBuilder\ServerConfigBuilder;
+
 class Server extends AbstractModule
 {
     const TYPE = 'server';
     const TYPE_DIRECTORY = 'modules/servers';
+
+    /**
+     * @return ServerConfigBuilder
+     */
+    public static function configBuilder()
+    {
+        return ServerConfigBuilder::builder();
+    }
 
     /**
      * Called only once

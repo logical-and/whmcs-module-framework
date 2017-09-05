@@ -4,6 +4,7 @@ namespace WHMCS\Module\Framework;
 
 use Axelarge\ArrayTools\Arr;
 use ErrorException;
+use WHMCS\Module\Framework\ConfigBuilder\AbstractConfigBuilder;
 use WHMCS\Module\Framework\Events\AbstractModuleListener;
 
 abstract class AbstractModule
@@ -35,10 +36,10 @@ abstract class AbstractModule
 
     /**
      * @param string $file __FILE__
-     * @param array $config [ 'name' => 'Plugin name', 'description' => '', 'version' => '1.0', 'author' => '' ]
+     * @param array|AbstractConfigBuilder $config [ 'name' => 'Plugin name', 'description' => '', 'version' => '1.0', 'author' => '' ]
      * @return Addon|static
      */
-    public static function registerModuleByFile($file, array $config)
+    public static function registerModuleByFile($file, $config)
     {
         // Prevent double registration
         $instance = static::getInstanceByFile($file, false);
@@ -94,7 +95,14 @@ abstract class AbstractModule
         return $module and $module->isEnabled();
     }
 
-    public function __construct($file, array $config)
+    /**
+     * AbstractModule constructor.
+     *
+     * @param string $file Module file
+     * @param array|AbstractConfigBuilder $config
+     * @throws ErrorException
+     */
+    public function __construct($file, $config)
     {
         if (!is_file($file)) {
             throw new ErrorException("Module register: that is not a file \"$file\"");
@@ -122,7 +130,7 @@ abstract class AbstractModule
         }
 
         $this->id               = $id;
-        $this->originalConfig   = $config;
+        $this->originalConfig   = $config instanceof AbstractConfigBuilder ? $config->build() : (array) $config;
         $this->directory        = $directory;
         $this->file             = $file;
         self::$instances[static::TYPE][ $id ] = $this;

@@ -3,11 +3,20 @@
 namespace WHMCS\Module\Framework;
 
 use Axelarge\ArrayTools\Arr;
+use WHMCS\Module\Framework\ConfigBuilder\AddonConfigBuilder;
 
 class Addon extends AbstractModule
 {
     const TYPE = 'addon';
     const TYPE_DIRECTORY = 'modules/addons';
+
+    /**
+     * @return AddonConfigBuilder
+     */
+    public static function configBuilder()
+    {
+        return AddonConfigBuilder::builder();
+    }
 
     /**
      * Called only once
