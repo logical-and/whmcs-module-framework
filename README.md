@@ -5,6 +5,9 @@
 
 `2.` Create file "plugin-name.php" inside "plugin-name" directory
 ```php
+$bootstrap = require_once __DIR__ . '/vendor/and/whmcs-module-framework/bootstrapper.php';
+$bootstrap();
+
 return Addon::registerModuleByFile(__FILE__,
    Addon::configBuilder()
    ->setName('My Plugin Friendly Name')

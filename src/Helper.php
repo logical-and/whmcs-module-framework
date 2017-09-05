@@ -155,6 +155,7 @@ class Helper
 
     public static function getRootDir()
     {
+        /** @noinspection PhpUndefinedConstantInspection */
         return rtrim(ROOTDIR, '/');
     }
 }
