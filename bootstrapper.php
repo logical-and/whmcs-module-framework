@@ -16,6 +16,7 @@ return function($marker = null) {
         $startDirectory = rtrim($startDirectory, '/');
 
         foreach ($commonPaths as $path) {
+            $path = ltrim($path, '/');
             $path = SymlinkDetective::detectPath("$startDirectory/$path");
             if (is_file($path)) {
                 $path = dirname($path);
@@ -53,7 +54,7 @@ return function($marker = null) {
     // Determine the plugin directory
     if (!$marker) {
         $marker = $dirLookup(__DIR__, [
-            '/../../vendor/'
+            '/../../../vendor/'
         ], function($dir) {
             return is_file("$dir/autoload.php");
         });
