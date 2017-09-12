@@ -20,4 +20,15 @@ class Client extends AbstractRequest
 
         return $this->response('getClientsProducts', $args, 'products.product');
     }
+
+    public function getEmailTemplates($type = null, $lang = null, $args = [])
+    {
+        if (null !== $type) {
+            $args['type'] = $type;
+        }
+        if (null !== $lang) {
+            $args['language'] = $lang;
+        }
+        return $this->response('GetEmailTemplates', $args, 'emailtemplates.emailtemplate');
+    }
 }
