@@ -7,7 +7,7 @@ use Axelarge\ArrayTools\Arr;
 use Countable;
 use Iterator;
 
-class ArrayResult implements ArrayAccess, Iterator, Countable
+class ArrayResult implements ArrayAccess, Iterator, Countable, \JsonSerializable
 {
 
     protected $data = [];
@@ -217,5 +217,13 @@ class ArrayResult implements ArrayAccess, Iterator, Countable
     public function count()
     {
         return count($this->result);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function jsonSerialize()
+    {
+        return $this->result;
     }
 }
