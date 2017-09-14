@@ -60,4 +60,68 @@ class Billing extends AbstractRequest
 
         return $this->response('AddInvoicePayment', $args);
     }
+
+    public function getCredits($clientId, array $args = [])
+    {
+        $args = array_merge(['clientid' => $clientId], $args);
+
+        return $this->response('GetCredits', $args, 'credits.credit.0');
+    }
+
+    public function addInTransaction(
+        $userId,
+        $paymentMethod,
+        $sum,
+        $description = null,
+        $invoiceId = null,
+        array $args = []
+    ) {
+        $args = array_merge(['amountin' => $sum], $args);
+
+        return $this->addTransaction($userId, $paymentMethod, $description,
+            $invoiceId, $args);
+    }
+
+    public function addOutTransaction(
+        $userId,
+        $paymentMethod,
+        $sum,
+        $description = null,
+        $invoiceId = null,
+        array $args = []
+    ) {
+        $args = array_merge(['amountout' => $sum], $args);
+
+        return $this->addTransaction($userId, $paymentMethod, $description,
+            $invoiceId, $args);
+    }
+
+    public function addTransaction(
+        $userId,
+        $paymentMethod,
+        $description = null,
+        $invoiceId = null,
+        array $args = []
+    ) {
+        $args = array_merge([
+            'paymentmethod' => $paymentMethod,
+            'userid'        => $userId
+        ], $args);
+        if (null !== $description) {
+            $args['description'] = $description;
+        }
+        if (null !== $invoiceId) {
+            $args['invoiceid'] = $invoiceId;
+        }
+        if (isset($args['amountout']) && isset($args['amountin'])) {
+            throw new \InvalidArgumentException('Both amountin and amountout can not be set.');
+        }
+        if (!isset($args['userid']) && !isset($args['invoiceid'])) {
+            throw new \InvalidArgumentException('invoiceid or userid must be set.');
+        }
+        if (!isset($args['invoiceid']) && !isset($args['description'])) {
+            throw new \InvalidArgumentException('invoiceid or description must be set.');
+        }
+        return $this->response('AddTransaction', $args);
+    }
 }
