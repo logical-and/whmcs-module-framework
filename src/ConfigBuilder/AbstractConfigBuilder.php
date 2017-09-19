@@ -35,7 +35,10 @@ abstract class AbstractConfigBuilder
                         }
                         else {
                             unset($value[ $i ]);
-                            $value = array_merge($value, $v->build());
+                            $build = $v->build();
+                            foreach ($build as $bf => $bv) {
+                                $value[$bf] = $bv;
+                            }
                         }
                     }
                 }
