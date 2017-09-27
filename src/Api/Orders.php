@@ -61,6 +61,6 @@ class Orders extends AbstractRequest
             $args['module'] = $module;
         }
 
-        return $this->response('getProducts', $args, 'products.product.0');
+        return $this->response('getProducts', $args, 'products.product');
     }
 }

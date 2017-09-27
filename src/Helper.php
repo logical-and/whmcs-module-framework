@@ -72,9 +72,10 @@ class Helper
         static $adminUser;
 
         if (!$adminUser) {
-            $data = self::db()->selectOne('SELECT username FROM tbladmins WHERE disabled = 0 LIMIT 1');
-            if (!empty($data->username)) {
-                $adminUser = $data->username;
+            $data = self::conn()->selectOne('SELECT username FROM tbladmins WHERE disabled = 0 LIMIT 1');
+            self::restoreDb();
+            if (!empty($data['username'])) {
+                $adminUser = $data['username'];
             }
             else {
                 throw new ErrorException('Admin user couldnt be retrieved from database');
