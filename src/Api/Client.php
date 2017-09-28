@@ -31,4 +31,29 @@ class Client extends AbstractRequest
         }
         return $this->response('GetEmailTemplates', $args, 'emailtemplates.emailtemplate');
     }
+
+    /**
+     * Retrieves data with `client` key for client details and `stats` key for client stat info.
+     * @param int|null $clientId
+     * @param int|null $email
+     * @param bool|null $stats
+     * @param array $args
+     * @return ArrayResult
+     */
+    public function getClientsDetails($clientId = null, $email = null, $stats = true, array $args = [])
+    {
+        if (null === $clientId && null === $email) {
+            throw new \InvalidArgumentException("getclientdetails api method expects email or clientid to be set.");
+        }
+        if (null !== $clientId) {
+            $args['clientid'] = $clientId;
+        }
+        if (null !== $email) {
+            $args['email'] = $email;
+        }
+        if (null !== $stats) {
+            $args['stats'] = $stats;
+        }
+        return $this->response('GetClientsDetails', $args);
+    }
 }
