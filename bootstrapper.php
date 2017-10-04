@@ -17,7 +17,7 @@ return function($marker = null) {
 
         foreach ($commonPaths as $path) {
             $path = ltrim($path, '/');
-            $path = SymlinkDetective::detectPath("$startDirectory/$path");
+            $path = "$startDirectory/$path"; // SymlinkDetective::detectPath("$startDirectory/$path");
             if (is_file($path)) {
                 $path = dirname($path);
             }
