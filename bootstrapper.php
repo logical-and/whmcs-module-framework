@@ -9,7 +9,9 @@ return function($marker = null) {
     // Load symlink and deps
     require_once __DIR__ . '/../../webmozart/assert/src/Assert.php';
     require_once __DIR__ . '/../../webmozart/path-util/src/Path.php';
-    require_once __DIR__ . '/../symlink-detective/src/SymlinkDetective.php';
+    if (!class_exists('SymlinkDetective')) {
+        require_once __DIR__ . '/../symlink-detective/src/SymlinkDetective.php';
+    }
 
     $dirLookup = function($startDirectory, array $commonPaths = [], callable $testAgainst) {
         $foundPath = '';
