@@ -207,7 +207,7 @@ abstract class AbstractModule
 
     public function getRelativeDirectory()
     {
-        return str_replace('\\', '/', str_replace(Helper::getRootDir(), '', $this->getDirectory()));
+        return str_replace(str_replace('\\', '/', Helper::getRootDir()), '', str_replace('\\', '/', $this->getDirectory()));
     }
 
     public function getFile()
