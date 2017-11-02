@@ -1,5 +1,9 @@
 <?php
 
+use Webmozart\Assert\Assert;
+use Webmozart\PathUtil\Path;
+use SymlinkDetective;
+
 return function($marker = null) {
     $vendorsDir = '';
     $rootDir = '';
@@ -7,9 +11,13 @@ return function($marker = null) {
     $whmcsInitialized = defined('ROOTDIR');
 
     // Load symlink and deps
-    require_once __DIR__ . '/../../webmozart/assert/src/Assert.php';
-    require_once __DIR__ . '/../../webmozart/path-util/src/Path.php';
-    if (!class_exists('SymlinkDetective')) {
+    if (!class_exists(Assert::class)) {
+        require_once __DIR__ . '/../../webmozart/assert/src/Assert.php';
+    }
+    if (!class_exists(Path::class)) {
+        require_once __DIR__ . '/../../webmozart/path-util/src/Path.php';
+    }
+    if (!class_exists(SymlinkDetective::class)) {
         require_once __DIR__ . '/../symlink-detective/src/SymlinkDetective.php';
     }
 
