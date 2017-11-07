@@ -4,6 +4,7 @@ namespace WHMCS\Module\Framework;
 
 use Axelarge\ArrayTools\Arr;
 use ErrorException;
+use SymlinkDetective;
 use WHMCS\Module\Framework\ConfigBuilder\AbstractConfigBuilder;
 use WHMCS\Module\Framework\Events\AbstractModuleListener;
 
@@ -122,7 +123,7 @@ abstract class AbstractModule
         }
 
         // addons/module-name/module-name.php
-        $directory = realpath(dirname($file));
+        $directory = SymlinkDetective::detectPath(dirname($file));
         if ($id != pathinfo($directory, PATHINFO_FILENAME)) {
             throw new ErrorException("Module register: file \"$file\" directory name must be the same as file name, " .
                 'current name "' . pathinfo(realpath(dirname(__FILE__)), PATHINFO_FILENAME) . '"' .
@@ -207,7 +208,11 @@ abstract class AbstractModule
 
     public function getRelativeDirectory()
     {
-        return str_replace(str_replace('\\', '/', Helper::getRootDir()), '', str_replace('\\', '/', $this->getDirectory()));
+        return str_replace(
+            SymlinkDetective::canonicalizePath(Helper::getRootDir()),
+            '',
+            SymlinkDetective::canonicalizePath($this->getDirectory())
+        );
     }
 
     public function getFile()

@@ -5,7 +5,7 @@
     "version": "0.5",
     "require": {
         "axelarge/array-tools": "@dev",
-        "and/symlink-detective": "0.5"
+        "and/symlink-detective": "0.7.*-dev"
     },
     "autoload": {
         "psr-4": {
