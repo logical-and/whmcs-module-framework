@@ -1,7 +1,7 @@
 {
     "name": "and/whmcs-module-framework",
     "description": "WHMCS mini framework for module/plugin (+ some utilites bunch)",
-    "minimum-stability": "alpha",
+    "minimum-stability": "beta",
     "version": "0.5",
     "require": {
         "axelarge/array-tools": "@dev",
