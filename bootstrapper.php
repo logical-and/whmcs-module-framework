@@ -1,8 +1,8 @@
 <?php
 
+use SymlinkDetective\SymlinkDetective;
 use Webmozart\Assert\Assert;
 use Webmozart\PathUtil\Path;
-use SymlinkDetective as Symlink;
 
 return function($marker = null) {
     $vendorsDir = '';
@@ -16,8 +16,8 @@ return function($marker = null) {
     if (!class_exists(Path::class)) {
         require_once __DIR__ . '/../../webmozart/path-util/src/Path.php';
     }
-    if (!class_exists(Symlink::class)) {
-        require_once __DIR__ . '/../symlink-detective/src/SymlinkDetective.php';
+    if (!class_exists(SymlinkDetective::class)) {
+        require_once __DIR__ . '/../symlink-detective/src/SymlinkDetective/SymlinkDetective.php';
     }
 
     $dirLookup = function($startDirectory, array $commonPaths = [], callable $testAgainst) {
@@ -26,7 +26,7 @@ return function($marker = null) {
 
         foreach ($commonPaths as $path) {
             $path = ltrim($path, '/');
-            $path = Symlink::detectPath("$startDirectory/$path");
+            $path = SymlinkDetective::detectPath("$startDirectory/$path");
             if (is_file($path)) {
                 $path = dirname($path);
             }
@@ -62,7 +62,7 @@ return function($marker = null) {
 
     // Determine the plugin directory
     if (!$marker) {
-        $marker = $dirLookup(dirname(Symlink::detectPath(__FILE__)), [
+        $marker = $dirLookup(dirname(SymlinkDetective::detectPath(__FILE__)), [
             '/../../../vendor/'
         ], function($dir) {
             return is_file("$dir/autoload.php");
