@@ -7,6 +7,14 @@ use WHMCS\Module\Framework\Events\AbstractHookListener;
 
 class ModuleHooks
 {
+
+    /**
+     * Register hook listeners
+     *
+     * @param string $file __FILE__
+     * @param AbstractHookListener[] $classes
+     * @throws ErrorException
+     */
     public static function registerHooks($file, array $classes)
     {
         foreach ($classes as $class) {
