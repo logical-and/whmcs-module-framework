@@ -3,11 +3,14 @@
 namespace WHMCS\Module\Framework\PageHooks;
 
 use WHMCS\Module\Framework\Events\AbstractHookListener;
+use WHMCS\Module\Framework\PageHooks\Admin\CustomAdminPageHook;
+use WHMCS\Module\Framework\PageHooks\Client\CustomClientPageHook;
 
 abstract class AbstractPageHookFacadeListener extends AbstractHookListener
 {
     // Parameters to define
     protected $pageHookClass;
+    protected $template;
     protected $position;
     protected $priority = 0;
 
@@ -20,16 +23,32 @@ abstract class AbstractPageHookFacadeListener extends AbstractHookListener
         return $this->pageHookClass;
     }
 
+    protected function getPageHookInstance()
+    {
+        $class = $this->getPageHookClass();
+        if (!is_subclass_of($class, AbstractPageHook::class)) {
+            throw new \ErrorException(sprintf('Class "%s" should be inherited from "%s" class',
+                $class, AbstractPageHook::class));
+        }
+        /** @var AbstractPageHook $class */
+        $instance = $class::buildInstance();
+
+        if ($instance instanceof CustomClientPageHook::class or $instance instanceof CustomAdminPageHook::class) {
+            if ($this->template) {
+                $instance->setTemplate($this->template);
+            }
+            else {
+                throw new \RuntimeException('"template" parameter must be defined');
+            }
+        }
+
+        return $instance;
+    }
+
     public function register()
     {
         if (!$this->registered) {
-            $class = $this->getPageHookClass();
-            if (!is_subclass_of($class, AbstractPageHook::class)) {
-                throw new \ErrorException(sprintf('Class "%s" should be inherited from "%s" class',
-                    $class, AbstractPageHook::class));
-            }
-            /** @var AbstractPageHook $class */
-            $instance = $class::buildInstance();
+            $instance = $this->getPageHookInstance();
 
             // Set parameters
 
