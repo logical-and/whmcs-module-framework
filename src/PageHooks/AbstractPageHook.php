@@ -93,13 +93,20 @@ abstract class AbstractPageHook
     {
         $self = $this;
         return function(array $vars) use ($templateName, $hook, $codeGenerator, $self) {
-            if (empty($vars['templatefile'])) {
-                throw new ErrorException("Bad hook \"$hook\" result, no \"templatefile\" variable is passed");
+            // Client area
+            if (!empty($vars['templatefile'])) {
+                $page = $vars['templatefile'];
             }
-            $page = $vars['templatefile'];
+            // Admin area
+            elseif (!empty($vars['filename'])) {
+                $page = $vars['filename'];
+            }
+            else {
+                throw new ErrorException("Bad hook \"{$hook}\" result, no \"templatefile\" or \"filename\" variable is passed");
+            }
 
-            // To Another page
-            if ('*' != $templateName and $templateName != $page) {
+            // To another page
+            if ('*' != $templateName and strtolower($templateName) != strtolower($page)) {
                 return '';
             }
 
