@@ -33,7 +33,9 @@ abstract class AbstractPageHookFacadeListener extends AbstractHookListener
         /** @var AbstractPageHook $class */
         $instance = $class::buildInstance();
 
-        if ($instance instanceof CustomClientPageHook::class or $instance instanceof CustomAdminPageHook::class) {
+        $classClient = CustomClientPageHook::class;
+        $classAdmin = CustomAdminPageHook::class;
+        if ($instance instanceof $classClient or $instance instanceof $classAdmin) {
             if ($this->template) {
                 $instance->setTemplate($this->template);
             }
