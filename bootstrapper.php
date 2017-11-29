@@ -87,7 +87,8 @@ return function($marker = null) {
     }
 
     if (!$vendorsDir or !is_dir($vendorsDir)) {
-        throw new ErrorException('Cannot determine vendor directory');
+        throw new ErrorException('Cannot determine vendor directory.' .
+            ($vendorsDir ? (' "' . $vendorsDir . '" does not exist') : ''));
     }
     $vendorsDir = rtrim($vendorsDir, '/');
 
@@ -110,7 +111,12 @@ return function($marker = null) {
     });
 
     if (!$rootDir) {
-        throw new ErrorException('Cannot determine WHMCS root directory');
+        throw new ErrorException('Cannot determine WHMCS root directory. ' .
+            '"' . SymlinkDetective::canonicalizePath($vendorsDir . "/../../../../init.php") . '""' .
+            ' or ' .
+            '"' . SymlinkDetective::canonicalizePath($vendorsDir . "/../../../../vendor/whmcs.composer.lock") . '""' .
+            ' does not exist.'
+        );
     }
 
     // Load WHMCS autoloader before (static files issue)
