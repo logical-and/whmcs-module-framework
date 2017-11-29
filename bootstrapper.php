@@ -102,7 +102,7 @@ return function($marker = null) {
     // Determine root directory
     $rootDir = $dirLookup($vendorsDir, [
         // modules/addon/plugin-name/vendor
-        "/../../../init.php"
+        "/../../../../init.php"
     ], function($dir) {
         $dir = rtrim($dir, '/');
 
