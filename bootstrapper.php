@@ -43,6 +43,11 @@ return function($marker = null) {
         // Go up until find that
         $dir = $startDirectory . '/a';
         while ($dir = dirname($dir)) {
+            // Infinite loop breakage
+            if ($dir == dirname($dir)) {
+                break;
+            }
+
             $dir = rtrim($dir, '/');
             if ($testAgainst($dir)) {
                 $foundPath = $dir;
