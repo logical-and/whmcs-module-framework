@@ -27,8 +27,44 @@ class AddonConfigBuilder extends AbstractConfigBuilder
         return $this;
     }
 
-    public function setVersion($value)
+    public function setVersion($value, $stability = null)
     {
+        if ($stability) {
+            $template = '{version} <sup style="color: {color}">{stability}</sup>';
+            $replacements = ['version' => $value, 'stability' => $stability];
+
+            switch ($stability) {
+                case 'dev':
+                    $replacements['color'] = '#999';
+                    break;
+
+                case 'alpha':
+                    $replacements['color'] = '#f79a22';
+                    break;
+
+                case 'beta':
+                case 'RC':
+                    $replacements['color'] = '#ffb710';
+                    break;
+
+                case 'stable':
+                    $replacements['color'] = '#46a546';
+                    break;
+
+                default:
+                    $replacements['color'] = '#666';
+                    break;
+            }
+
+            if (!empty($replacements['color'])) {
+                $value = str_replace(
+                    array_map(function($v) { return '{' . $v . '}'; }, array_keys($replacements)),
+                    array_values($replacements),
+                    $template
+                );
+            }
+        }
+
         $this->config[ 'version' ] = $value;
 
         return $this;
