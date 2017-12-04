@@ -118,6 +118,11 @@ class FieldConfigBuilder extends AbstractConfigBuilder
 
     public function setDescription($value)
     {
+        // Start from newline
+        if (strlen($value) > 100) {
+            $value = "</br>$value";
+        }
+
         $this->config[ 'Description' ] = $value;
 
         return $this;
