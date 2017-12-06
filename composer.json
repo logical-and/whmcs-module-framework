@@ -2,7 +2,7 @@
     "name": "and/whmcs-module-framework",
     "description": "WHMCS mini framework for module/plugin (+ some utilites bunch)",
     "minimum-stability": "beta",
-    "version": "0.5",
+    "version": "0.6",
     "require": {
         "axelarge/array-tools": "@dev",
         "and/symlink-detective": "0.7.*-dev"
