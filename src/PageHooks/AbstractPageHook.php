@@ -180,12 +180,12 @@ abstract class AbstractPageHook
         }
 
         // Make backup
-        if (file_exists($pathBackup)) {
-            unlink($pathBackup);
+        if (!file_exists($pathBackup)) {
+            copy($path, $pathBackup);
+            touch($pathBackup);
         }
-        copy($path, $pathBackup);
         file_put_contents($path, $content);
-        touch($pathBackup);
+        touch($path);
 
         // Ok, we're done
     }
