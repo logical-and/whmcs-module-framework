@@ -25,7 +25,9 @@ class ClassesHooks
                     $class, AbstractHookListener::class));
             }
 
-            $instance->register();
+            if (false !== $instance->preRegister()) {
+                $instance->register();
+            }
         }
     }
 }

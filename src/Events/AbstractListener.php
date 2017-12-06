@@ -69,6 +69,11 @@ abstract class AbstractListener
 
     }
 
+    public function preRegister()
+    {
+        return true;
+    }
+
     abstract public function register();
 
     // --- Accessors

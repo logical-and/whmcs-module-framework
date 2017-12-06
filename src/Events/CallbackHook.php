@@ -22,7 +22,12 @@ class CallbackHook extends AbstractHookListener
 
     public static function attachCallback($name, $priority, callable $callback)
     {
-        return self::createCallback($name, $priority, $callback)->register();
+        $callback = self::createCallback($name, $priority, $callback);
+        if (false !== $callback->preRegister()) {
+            $callback->register();
+        }
+
+        return $callback;
     }
 
     public function setCallback(callable $callback)

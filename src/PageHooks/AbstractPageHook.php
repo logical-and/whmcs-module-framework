@@ -61,7 +61,10 @@ abstract class AbstractPageHook
 
     public function apply()
     {
-        $this->convertToCallbackHook()->register();
+        $callback = $this->convertToCallbackHook();
+        if (false !== $callback->preRegister()) {
+            $callback->register();
+        }
     }
 
     public function convertToCallbackHook()

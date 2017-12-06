@@ -23,7 +23,9 @@ class CallbackModuleListener extends AbstractModuleListener
         $instance->setName($name);
         $instance->setCallback($callback);
 
-        return $instance->register();
+        if (false !== $instance->preRegister()) {
+            $instance->register();
+        }
     }
 
     public function setCallback(callable $callback)

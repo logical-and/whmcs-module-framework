@@ -155,7 +155,10 @@ abstract class AbstractModule
                     $class, AbstractModuleListener::class));
             }
 
-            $instance->setModule($this)->register();
+            $instance->setModule($this);
+            if (false !== $instance->preRegister()) {
+                $instance->register();
+            }
         }
 
         return $this;
