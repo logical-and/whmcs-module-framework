@@ -189,22 +189,9 @@ abstract class AbstractListener
 
     protected function view($template, array $vars = [], $dir = null)
     {
-        global $templates_compiledir;
-
-        $smarty = new Smarty();
-        $smarty->compile_dir = $templates_compiledir;
-
-        foreach ($vars as $key => $value) {
-            $smarty->assign($key, $value);
-        }
-
-        // Render template
         $templateDir = rtrim($dir ? $dir : $this->getTemplatesDir(), '/');
-        $rendered = $smarty->fetch("$templateDir/$template");
 
-        Helper::restoreDb();
-
-        return $rendered;
+        return Helper::renderTemplate("$templateDir/$template", $vars);
     }
 
     protected function getTemplatesDir()

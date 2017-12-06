@@ -159,4 +159,24 @@ class Helper
         /** @noinspection PhpUndefinedConstantInspection */
         return rtrim(ROOTDIR, '/');
     }
+
+    public static function renderTemplate($file, array $vars = [])
+    {
+        global $templates_compiledir;
+
+        /** @noinspection PhpUndefinedClassInspection */
+        $smarty = new \Smarty();
+        $smarty->compile_dir = $templates_compiledir;
+
+        foreach ($vars as $key => $value) {
+            $smarty->assign($key, $value);
+        }
+
+        // Render template
+        $rendered = $smarty->fetch($file);
+
+        Helper::restoreDb();
+
+        return $rendered;
+    }
 }
