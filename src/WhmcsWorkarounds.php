@@ -25,7 +25,7 @@ class WhmcsWorkarounds
                 return ["result" => "error", "message" => "Client Not Found"];
             }
 
-            $data = Helper::conn()->selectOne("SELECT id FROM tblclients $where LIMIT 1", $whereData);
+            $data = Helper::connAssoc()->selectOne("SELECT id FROM tblclients $where LIMIT 1", $whereData);
             if (!$data) {
                 return ["result" => "error", "message" => "Client Not Found"];
             }

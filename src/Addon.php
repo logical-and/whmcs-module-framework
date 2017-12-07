@@ -40,11 +40,10 @@ class Addon extends AbstractModule
             }
 
             $moduleName = $this->getId();
-            foreach (Helper::conn()->select("SELECT * FROM tbladdonmodules WHERE module = '$moduleName'") as $row) {
+            foreach (Helper::connAssoc()->select("SELECT * FROM tbladdonmodules WHERE module = '$moduleName'") as $row) {
                 $row                         = json_decode(json_encode($row), true);
                 $config[ $row[ 'setting' ] ] = html_entity_decode($row[ 'value' ]);
             }
-            Helper::restoreDb();
 
             $this->config = $config;
         }
@@ -60,9 +59,8 @@ class Addon extends AbstractModule
     public static function isModuleEnabled($id)
     {
         return self::getStaticCachedResult(static::TYPE . $id, function() use ($id) {
-            $result = !!Helper::conn()
+            $result = !!Helper::connAssoc()
                 ->selectOne("SELECT count(*) as enabled FROM tbladdonmodules WHERE module = ?", [$id])['enabled'];
-            Helper::restoreDb();
 
             return $result;
         });

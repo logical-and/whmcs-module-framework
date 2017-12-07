@@ -12,6 +12,8 @@ class Helper
 {
     protected static $defaultFetchMode;
 
+    protected static $connections = [];
+
     public static function api($method, array $data = [], $workarounds = true)
     {
         if ($workarounds) {
@@ -72,8 +74,7 @@ class Helper
         static $adminUser;
 
         if (!$adminUser) {
-            $data = self::conn()->selectOne('SELECT username FROM tbladmins WHERE disabled = 0 LIMIT 1');
-            self::restoreDb();
+            $data = self::connAssoc()->selectOne('SELECT username FROM tbladmins WHERE disabled = 0 LIMIT 1');
             if (!empty($data['username'])) {
                 $adminUser = $data['username'];
             }
@@ -85,32 +86,39 @@ class Helper
         return $adminUser;
     }
 
-    public static function db()
-    {
-        /** @noinspection PhpUndefinedClassInspection */
-        $conn = Manager::connection();
-
-        if (!empty(self::$defaultFetchMode)) {
-            $conn->setFetchMode(self::$defaultFetchMode);
-        }
-        else {
-            self::$defaultFetchMode = $conn->getFetchMode();
-        }
-
-        return $conn;
-    }
-
     public static function conn($fetchMode = \PDO::FETCH_ASSOC)
     {
-        $conn = self::db();
-        $conn->setFetchMode($fetchMode);
+        if (empty(self::$connections[$fetchMode])) {
+            /** @noinspection PhpUndefinedClassInspection */
+            $conn = self::$connections[$fetchMode] = ConnectionClone::constructClone(Manager::connection());
+            /** @noinspection PhpUndefinedMethodInspection */
+            $conn->setFetchMode($fetchMode);
+        }
 
-        return $conn;
+        return self::$connections[$fetchMode];
     }
 
+    public static function connAssoc()
+    {
+        return static::conn(\PDO::FETCH_ASSOC);
+    }
+
+    public static function connObj()
+    {
+        return static::conn(\PDO::FETCH_OBJ);
+    }
+
+    public static function db()
+    {
+        return static::connAssoc();
+    }
+
+    /**
+     * @deprecated No need to use this method anymore since connection is cloned
+     */
     public static function restoreDb()
     {
-        self::db();
+
     }
 
     /**
@@ -146,7 +154,7 @@ class Helper
             }
         }
 
-        $result = Helper::conn()->selectOne("SELECT value FROM tblconfiguration WHERE setting = ?", [$key]);
+        $result = Helper::connAssoc()->selectOne("SELECT value FROM tblconfiguration WHERE setting = ?", [$key]);
         if (isset($result['value'])) {
             return $result['value'];
         }
@@ -174,8 +182,6 @@ class Helper
 
         // Render template
         $rendered = $smarty->fetch($file);
-
-        Helper::restoreDb();
 
         return $rendered;
     }
