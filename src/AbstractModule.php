@@ -218,6 +218,15 @@ abstract class AbstractModule
         );
     }
 
+    public function getPathUrl($path, array $args = [])
+    {
+        $systemUrl = Helper::getConfigValue('SystemURL');
+
+        return rtrim($systemUrl, '/') .
+            $this->getRelativeDirectory() .
+            '/' . ltrim($path, '/') . (!$args ? '' : ('?' . http_build_query($args)));
+    }
+
     public function getFile()
     {
         return $this->file;
