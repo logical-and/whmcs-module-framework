@@ -1,7 +1,7 @@
 (function() {
 	// Definitions
 	var path = '{$path}',
-		html = '{$html}';
+		html = '{$node}';
 
 	// Prepare variables
 	var target = findNodeByPath(path);
@@ -11,5 +11,5 @@
 		return;
 	}
 
-	target.html(html);
+	target.replaceWith(html);
 })();
