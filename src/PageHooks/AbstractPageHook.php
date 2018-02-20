@@ -149,6 +149,7 @@ abstract class AbstractPageHook
             // Fix templates
             switch ($page) {
                 case 'viewinvoice':
+                case 'oauth/layout':
                     if (!empty($vars['template'])) {
                         $theme = $vars['template'];
                         $path = Helper::getRootDir() . "/templates/$theme/$page.tpl";
