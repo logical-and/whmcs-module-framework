@@ -232,6 +232,16 @@ abstract class AbstractModule
         return $this->file;
     }
 
+    public function getTemplatesDir()
+    {
+        return $this->getDirectory() . "/templates";
+    }
+
+    public function getRelativeTemplatesDir()
+    {
+        return str_replace('\\', '/', str_replace(Helper::getRootDir(), '', $this->getTemplatesDir()));
+    }
+
     // --- Helpers
 
     protected function getCachedResult($key, callable $callback)
@@ -256,5 +266,12 @@ abstract class AbstractModule
         }
 
         return self::$staticCache[ $cacheId ] = $callback();
+    }
+
+    public function view($template, array $vars = [], $dir = null)
+    {
+        $templateDir = rtrim($dir ? $dir : $this->getTemplatesDir(), '/');
+
+        return Helper::renderTemplate("$templateDir/$template", $vars);
     }
 }

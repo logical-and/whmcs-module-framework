@@ -187,20 +187,30 @@ abstract class AbstractListener
 
     // --- Helpers
 
+    /**
+     * @inheritdoc
+     * @deprecated Use this->getModule()->view() instead
+     */
     protected function view($template, array $vars = [], $dir = null)
     {
-        $templateDir = rtrim($dir ? $dir : $this->getTemplatesDir(), '/');
-
-        return Helper::renderTemplate("$templateDir/$template", $vars);
+        return $this->getModule()->view($template, $vars, $dir);
     }
 
+    /**
+     * @deprecated Use this->getModule()->getTemplatesDir() instead
+     * @return string
+     */
     protected function getTemplatesDir()
     {
-        return $this->getModule()->getDirectory() . "/templates";
+        return $this->getModule()->getTemplatesDir();
     }
 
+    /**
+     * @deprecated Use this->getModule->getRelativeTemplatesDir() instead
+     * @return mixed
+     */
     protected function getRelativeTemplatesDir()
     {
-        return str_replace('\\', '/', str_replace(Helper::getRootDir(), '', $this->getTemplatesDir()));
+        return $this->getModule()->getRelativeTemplatesDir();
     }
 }
