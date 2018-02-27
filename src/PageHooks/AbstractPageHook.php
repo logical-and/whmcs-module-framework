@@ -177,6 +177,8 @@ abstract class AbstractPageHook
                     break;
             }
 
+            $codeGenerator = $codeGenerator->bindTo($self);
+            
             $return = call_user_func($codeGenerator, $vars);
 
             if ($self->jsCustomizers[0]->hasAdjustments() and self::POSITION_BODY_BOTTOM != $self->position) {
