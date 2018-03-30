@@ -53,7 +53,7 @@ class BackendPageCustomizer extends AbstractPageCustomizer
                     $isChanged = true;
                 }
                 else {
-                    throw new \RuntimeException('Cannot inject variable "' . $adjustment->getInjection() . '" ' .
+                    throw new \RuntimeException('Cannot apply adjustment "' . $adjustment->getAdjustment() . '" ' .
                         'into "' . $this->path . '"');
                 }
             }

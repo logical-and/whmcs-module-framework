@@ -8,9 +8,10 @@ class SimpleRegexpReplacePageAdjustment extends AbstractPageAdjustment
 {
 
     protected $content;
-    protected $injection;
+    protected $isReplace;
+    protected $adjustment;
     protected $target;
-    protected $position;
+    protected $position = self::POSITION_BEFORE;
 
     /**
      * Set content
@@ -33,19 +34,34 @@ class SimpleRegexpReplacePageAdjustment extends AbstractPageAdjustment
      */
     public function setInjection($injection)
     {
-        $this->injection = $injection;
+        $this->isReplace = false;
+        $this->adjustment = $injection;
 
         return $this;
     }
 
     /**
-     * Get injection
+     * Set replacement
+     *
+     * @param string $replacement
+     * @return $this
+     */
+    public function setReplacement($replacement)
+    {
+        $this->isReplace = true;
+        $this->adjustment = $replacement;
+
+        return $this;
+    }
+
+    /**
+     * Get adjustment (injection or replacement)
      *
      * @return mixed
      */
-    public function getInjection()
+    public function getAdjustment()
     {
-        return $this->injection;
+        return $this->adjustment;
     }
 
     /**
@@ -98,16 +114,23 @@ class SimpleRegexpReplacePageAdjustment extends AbstractPageAdjustment
     {
         $this->validateParameters();
 
-        return false !== strpos($this->content, $this->injection);
+        return false !== strpos($this->content, $this->adjustment);
     }
 
     public function apply()
     {
         $this->validateParameters();
 
+        if($this->isReplace) {
+            $b = '';
+        }
+        else {
+            $b = "\n\$1";
+        }
+
         $content = preg_replace(
             "~({$this->target})~",
-            self::POSITION_BEFORE == $this->position ? "{$this->injection}\n$1" : "$1\n{$this->injection}",
+            self::POSITION_BEFORE == $this->position ? "{$this->adjustment}$b" : "$b{$this->adjustment}",
             $this->content,
             1,
             $replaced
@@ -122,8 +145,8 @@ class SimpleRegexpReplacePageAdjustment extends AbstractPageAdjustment
             throw new \BadMethodCallException('No content is defined');
         }
 
-        if (!$this->injection) {
-            throw new \BadMethodCallException('No injection is defined');
+        if (!$this->adjustment) {
+            throw new \BadMethodCallException('No adjustment is defined');
         }
 
         if (!$this->target) {
