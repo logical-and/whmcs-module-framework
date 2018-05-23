@@ -31,8 +31,13 @@ class Helper
             $preparedData[strtolower($key)] = $value;
         }
 
-        /** @noinspection PhpUndefinedFunctionInspection */
-        $data = localApi($preparedMethod, $preparedData, self::getAdminUser());
+        $data = call_user_func_array('localApi', array_merge(
+            [$preparedMethod, $preparedData],
+            7.3 > self::getWHMCSVersion() ?
+                // Admin user is required in WHMCS before 7.3 version
+                [self::getAdminUser()] :
+                ['']
+        ));
 
         return $data;
     }
