@@ -143,6 +143,12 @@ abstract class AbstractPageHook
                 }
             }
             else {
+                // Known issue
+                if (7.5 <= Helper::getWHMCSVersion() and Helper::getWHMCSVersion() < 7.6
+                    and isset($vars['filename']) and empty($vars['filename'])) {
+                    return '';
+                }
+
                 throw new ErrorException("Bad hook \"{$hook}\" result, no \"templatefile\" or \"filename\" variable is passed");
             }
 
