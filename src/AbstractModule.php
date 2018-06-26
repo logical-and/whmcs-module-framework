@@ -35,6 +35,9 @@ abstract class AbstractModule
     protected $cache = [];
     protected static $staticCache = [];
 
+    /** @var ModuleStorage */
+    protected $storage;
+
     /**
      * @param string $file __FILE__
      * @param array|AbstractConfigBuilder $config [ 'name' => 'Plugin name', 'description' => '', 'version' => '1.0', 'author' => '' ]
@@ -135,6 +138,8 @@ abstract class AbstractModule
         $this->directory        = $directory;
         $this->file             = $file;
         self::$instances[static::TYPE][ $id ] = $this;
+
+        $this->storage = new ModuleStorage($this);
 
         // Now, register it
         $this->register();
@@ -273,5 +278,15 @@ abstract class AbstractModule
         $templateDir = rtrim($dir ? $dir : $this->getTemplatesDir(), '/');
 
         return Helper::renderTemplate("$templateDir/$template", $vars);
+    }
+
+    /**
+     * Get module storage instance (key value, supports dot.paths)
+     *
+     * @return ModuleStorage
+     */
+    public function getStorage()
+    {
+        return $this->storage;
     }
 }
