@@ -3,7 +3,9 @@
 namespace WHMCS\Module\Framework\PageHooks;
 
 use WHMCS\Module\Framework\Events\AbstractHookListener;
+use WHMCS\Module\Framework\PageHooks\Admin\AbstractAdminPageHook;
 use WHMCS\Module\Framework\PageHooks\Admin\CustomAdminPageHook;
+use WHMCS\Module\Framework\PageHooks\Client\AbstractClientPageHook;
 use WHMCS\Module\Framework\PageHooks\Client\CustomClientPageHook;
 
 abstract class AbstractPageHookFacadeListener extends AbstractHookListener
@@ -30,7 +32,7 @@ abstract class AbstractPageHookFacadeListener extends AbstractHookListener
             throw new \ErrorException(sprintf('Class "%s" should be inherited from "%s" class',
                 $class, AbstractPageHook::class));
         }
-        /** @var AbstractPageHook $class */
+        /** @var AbstractPageHook|CustomAdminPageHook|CustomAdminPageHook $class */
         $instance = $class::buildInstance();
 
         $classClient = CustomClientPageHook::class;
@@ -62,7 +64,8 @@ abstract class AbstractPageHookFacadeListener extends AbstractHookListener
             if ($this->priority) {
                 $instance->setPriority($this->priority);
             }
-            $instance->setCodeCallback(function(array $vars) {
+
+            $callback = function(array $vars) {
                 try {
                     // Break the chain
                     if (false === $this->preExecute()) {
@@ -84,6 +87,12 @@ abstract class AbstractPageHookFacadeListener extends AbstractHookListener
                         throw $e;
                     }
                 }
+            };
+
+            // Create a scope to protect "this" variable
+            $callback->bindTo($this);
+            $instance->setCodeCallback(function() use (&$callback) {
+                return call_user_func_array($callback, func_get_args());
             });
 
             // Delegate subscribing
