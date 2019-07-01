@@ -112,7 +112,9 @@ return function($marker = null) {
     ], function($dir) {
         $dir = rtrim($dir, '/');
 
-        return is_file("$dir/init.php") and is_file("$dir/vendor/whmcs.composer.lock");
+        return is_file("$dir/init.php") and
+            (is_file("$dir/vendor/whmcs.composer.lock") or
+                is_file("$dir/vendor/whmcs/whmcs-foundation/lib/License.php"));
     });
 
     if (!$rootDir) {
@@ -120,6 +122,8 @@ return function($marker = null) {
             '"' . SymlinkDetective::canonicalizePath($vendorsDir . "/../../../../init.php") . '""' .
             ' or ' .
             '"' . SymlinkDetective::canonicalizePath($vendorsDir . "/../../../../vendor/whmcs.composer.lock") . '""' .
+            ' or ' .
+            '"' . SymlinkDetective::canonicalizePath($vendorsDir . "/../../../../vendor/whmcs/whmcs-foundation/lib/License.php") . '""' .
             ' does not exist.'
         );
     }
