@@ -4,7 +4,7 @@ namespace WHMCS\Module\Framework;
 
 use Axelarge\ArrayTools\Arr;
 use ErrorException;
-use SymlinkDetective;
+use SymlinkDetective\SymlinkDetective;
 use WHMCS\Module\Framework\ConfigBuilder\AbstractConfigBuilder;
 use WHMCS\Module\Framework\Events\AbstractModuleListener;
 
