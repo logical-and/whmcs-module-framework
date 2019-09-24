@@ -5,6 +5,7 @@ namespace WHMCS\Module\Framework\PageHooks;
 use ErrorException;
 use WHMCS\Module\Framework\Events\CallbackHook;
 use WHMCS\Module\Framework\Helper;
+use WHMCS\Module\Framework\PageHooks\PageAdjustment\DomPageAdjustment;
 use WHMCS\Module\Framework\PageHooks\PageAdjustment\SimpleRegexpReplacePageAdjustment;
 use WHMCS\Module\Framework\PageHooks\PageCustomizer\BackendPageCustomizer;
 use WHMCS\Module\Framework\PageHooks\PageCustomizer\JsPageCustomizer;
@@ -90,6 +91,13 @@ abstract class AbstractPageHook
         $this->jsCustomizers[0]->add($adjustment);
 
         return $this;
+    }
+
+    public function ensureJquery()
+    {
+        $this->addJsPageAdjustment(DomPageAdjustment::build()
+            ->setCssPath(uniqid('jQueryLoader_'))
+            ->setActionSetProperty('loaded', time()));
     }
 
     public function apply()

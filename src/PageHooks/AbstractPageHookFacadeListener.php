@@ -15,6 +15,7 @@ abstract class AbstractPageHookFacadeListener extends AbstractHookListener
     protected $template;
     protected $position;
     protected $priority = 0;
+    protected $ensureJquery = false;
 
     protected function getPageHookClass()
     {
@@ -47,6 +48,13 @@ abstract class AbstractPageHookFacadeListener extends AbstractHookListener
         }
 
         return $instance;
+    }
+
+    protected function ensureJquery()
+    {
+        $this->ensureJquery = true;
+
+        return $this;
     }
 
     public function register()
@@ -97,6 +105,11 @@ abstract class AbstractPageHookFacadeListener extends AbstractHookListener
 
             // Delegate subscribing
             $instance->apply();
+
+            // Load jQuery when necessary
+            if ($this->ensureJquery) {
+                $instance->ensureJquery();
+            }
 
             $this->registered = true;
         }
