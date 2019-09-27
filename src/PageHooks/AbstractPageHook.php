@@ -152,7 +152,7 @@ abstract class AbstractPageHook
             }
             else {
                 // Known issue
-                if (7.5 <= Helper::getWHMCSVersion() and Helper::getWHMCSVersion() < 7.6
+                if (7.5 <= Helper::getWHMCSVersion()
                     and isset($vars['filename']) and empty($vars['filename'])) {
                     return '';
                 }
