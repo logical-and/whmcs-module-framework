@@ -96,8 +96,8 @@ abstract class AbstractPageHook
     public function ensureJquery()
     {
         $this->addJsPageAdjustment(DomPageAdjustment::build()
-            ->setCssPath(uniqid('jQueryLoader_'))
-            ->setActionSetProperty('loaded', time()));
+            ->setCssPath('body')
+            ->setActionSetProperty('jQueryLoader_' . uniqid(), time()));
     }
 
     public function apply()

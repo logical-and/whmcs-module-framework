@@ -99,17 +99,20 @@ abstract class AbstractPageHookFacadeListener extends AbstractHookListener
 
             // Create a scope to protect "this" variable
             $callback->bindTo($this);
-            $instance->setCodeCallback(function() use (&$callback) {
-                return call_user_func_array($callback, func_get_args());
+            $facade = $this;
+            $instance->setCodeCallback(function () use(&$callback, &$instance, &$facade) {
+                $return = call_user_func_array($callback, func_get_args());
+
+                // Load jQuery when necessary
+                if ($facade->ensureJquery) {
+                    $instance->ensureJquery();
+                }
+
+                return $return;
             });
 
             // Delegate subscribing
             $instance->apply();
-
-            // Load jQuery when necessary
-            if ($this->ensureJquery) {
-                $instance->ensureJquery();
-            }
 
             $this->registered = true;
         }
