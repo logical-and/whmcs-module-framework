@@ -6,7 +6,8 @@
     "require": {
         "axelarge/array-tools": "@dev",
         "and/symlink-detective": "0.7.*-dev",
-        "gears/arrays": "*"
+        "gears/arrays": "*",
+        "symfony/http-foundation": ">=3.4"
     },
     "autoload": {
         "psr-4": {

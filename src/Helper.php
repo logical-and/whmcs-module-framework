@@ -7,6 +7,7 @@ use ErrorException;
 use /** @noinspection PhpUndefinedClassInspection */
     /** @noinspection PhpUndefinedNamespaceInspection */
     Illuminate\Database\Capsule\Manager;
+use Symfony\Component\HttpFoundation\Request;
 
 class Helper
 {
@@ -189,5 +190,42 @@ class Helper
         $rendered = $smarty->fetch($file);
 
         return $rendered;
+    }
+
+    /**
+     * Checking allowed client IP connecting to the WHMCS API
+     *
+     * @param Request|null $request This request needed to get client's IP
+     * @param bool $throwException Whether to throw exception if client's IP is not in allowed list
+     * @return bool
+     * @throws ErrorException Throws exception if $throwException = true (by default it is)
+     */
+    public static function checkAllowedClientIP(Request $request = null, $throwException = true)
+    {
+        // Determine env
+        if (!$request) {
+            $request = Request::createFromGlobals();
+        }
+
+        // Get client IP
+        $clientIP = $request->getClientIp();
+
+        // Get config value APIAllowedIPs
+        $result = unserialize(static::getConfigValue('APIAllowedIPs'));
+
+        $allowedIPs = [];
+        foreach ($result as $item) {
+            if(!empty($item["ip"])) {
+                $allowedIPs[] = $item["ip"];
+            }
+        }
+
+        $allowStatus = in_array($clientIP, $allowedIPs) ? true : false;
+
+        if (!$allowStatus and $throwException) {
+            throw new ErrorException("Unauthorized \"$clientIP\" IP");
+        }
+
+        return $allowStatus;
     }
 }
