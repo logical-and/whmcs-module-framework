@@ -223,13 +223,16 @@ abstract class AbstractModule
         );
     }
 
+    /**
+     * Produce relative to module path
+     *
+     * @param $path
+     * @param array $args
+     * @return string
+     */
     public function getPathUrl($path, array $args = [])
     {
-        $systemUrl = Helper::getConfigValue('SystemURL');
-
-        return rtrim($systemUrl, '/') .
-            $this->getRelativeDirectory() .
-            '/' . ltrim($path, '/') . (!$args ? '' : ('?' . http_build_query($args)));
+        return Helper::getPathUrl($this->getRelativeDirectory() . '/' . ltrim($path, '/'), $args);
     }
 
     public function getFile()

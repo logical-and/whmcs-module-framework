@@ -168,6 +168,23 @@ class Helper
         return $default;
     }
 
+    /**
+     * Produce absolute url for given path and arguments
+     *
+     * @param $path
+     * @see AbstractModule#getPathUrl()
+     * @param array $args
+     * @return string
+     */
+    public static function getPathUrl($path, array $args = [])
+    {
+        $systemUrl = static::getConfigValue('SystemURL');
+
+        return rtrim($systemUrl, '/') .
+            '/' . ltrim($path, '/') .
+            (!$args ? '' : ('?' . http_build_query($args)));
+    }
+
     public static function getRootDir()
     {
         /** @noinspection PhpUndefinedConstantInspection */
