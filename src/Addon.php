@@ -4,6 +4,8 @@ namespace WHMCS\Module\Framework;
 
 use Axelarge\ArrayTools\Arr;
 use WHMCS\Module\Framework\ConfigBuilder\AddonConfigBuilder;
+use WHMCS\Module\Framework\Events\ModuleListeners\Addon\ActivateAddonListenerBuilder;
+use WHMCS\Module\Framework\Events\ModuleListeners\Addon\UpgradeAddonListenerBuilder;
 
 class Addon extends AbstractModule
 {
@@ -64,5 +66,28 @@ class Addon extends AbstractModule
 
             return $result;
         });
+    }
+
+    public function onActivateListener(callable $listener)
+    {
+        return $this->registerModuleListeners([ActivateAddonListenerBuilder::build($listener)]);
+    }
+
+    public function onUpgradeListeners(array $versionsListeners)
+    {
+        $listener = UpgradeAddonListenerBuilder::build($versionsListeners);
+        $this->registerModuleListeners([$listener]);
+
+        // Subscribe to activation too
+        $self = $this;
+        $this->onActivateListener(function() use (&$listener, &$self) {
+
+            $listener->callHandler([
+                // Emulate arguments
+                'version' => UpgradeAddonListenerBuilder::getAddonTrackedVersion($self) // kinda previous
+            ]);
+        });
+
+        return $this;
     }
 }
