@@ -38,6 +38,8 @@ abstract class AbstractModule
     /** @var ModuleStorage */
     protected $storage;
 
+    protected $initialized = false;
+
     /**
      * @param string $file __FILE__
      * @param array|AbstractConfigBuilder $config [ 'name' => 'Plugin name', 'description' => '', 'version' => '1.0', 'author' => '' ]
@@ -48,7 +50,15 @@ abstract class AbstractModule
         // Prevent double registration
         $instance = static::getInstanceByFile($file, false);
 
-        return $instance ? $instance : new static($file, $config);
+        if ($instance) {
+            if (!$instance->initialized) {
+                $instance->initialized = true;
+            }
+
+            return $instance;
+        }
+
+        return new static($file, $config);
     }
 
     public static function getInstanceById($id, $throw = true, $load = true)
@@ -149,6 +159,11 @@ abstract class AbstractModule
 
     public function registerModuleListeners($classes = [])
     {
+        // State can't mutate
+        if ($this->initialized) {
+            return $this;
+        }
+
         foreach ($classes as $class) {
             /** @var AbstractModuleListener $class */
             /** @var AbstractModuleListener $instance */
