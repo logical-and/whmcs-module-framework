@@ -4,7 +4,7 @@ use SymlinkDetective\SymlinkDetective;
 use Webmozart\Assert\Assert;
 use Webmozart\PathUtil\Path;
 
-return function($marker = null) {
+return function($marker = null, $loadStatic = false) {
     $vendorsDir = '';
 
     $whmcsInitialized = defined('ROOTDIR');
@@ -63,6 +63,19 @@ return function($marker = null) {
         return false;
     };
 
+    $postProcessing = function($vendorsDir) use ($loadStatic) {
+        if ($loadStatic) {
+            /** @noinspection PhpIncludeInspection */
+            $staticFiles = require "$vendorsDir/composer/autoload_files.php";
+            if (!empty($staticFiles)) {
+                foreach ($staticFiles as $file) {
+                    /** @noinspection PhpIncludeInspection */
+                    require_once $file;
+                }
+            }
+        }
+    };
+
     // Determine dependencies directory
 
     // Determine the plugin directory
@@ -101,6 +114,9 @@ return function($marker = null) {
         /** @noinspection PhpIncludeInspection */
         require_once "$vendorsDir/autoload.php";
 
+        // Post-actions (load static files)
+        $postProcessing($vendorsDir);
+
         // No need to proceed
         return;
     }
@@ -134,6 +150,8 @@ return function($marker = null) {
     // Deps
     /** @noinspection PhpIncludeInspection */
     require_once "$vendorsDir/autoload.php";
+    // Post-actions (load static files)
+    $postProcessing($vendorsDir);
     // Load WHMCS
     /** @noinspection PhpUnusedLocalVariableInspection */
     global $whmcs;
