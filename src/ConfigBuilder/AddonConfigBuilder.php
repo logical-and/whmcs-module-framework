@@ -43,10 +43,10 @@ class AddonConfigBuilder extends AbstractConfigBuilder
                     break;
 
                 case 'beta':
-                case 'RC':
                     $replacements['color'] = '#ffb710';
                     break;
 
+                case 'RC':
                 case 'stable':
                     $replacements['color'] = '#46a546';
                     break;
