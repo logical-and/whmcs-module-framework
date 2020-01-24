@@ -30,18 +30,19 @@ class CallbackModuleListener extends AbstractModuleListener
 
     public function setCallback(callable $callback)
     {
-        $this->callback = $callback;
+        $this->callback = Closure::bind($callback, $this);
 
         return $this;
     }
-
     protected function execute(array $args = null)
     {
-        // Change the scope
-        if ($this->callback instanceof Closure) {
-            $this->callback = $this->callback->bindTo($this);
+        $parameters = [$args];
+
+        // Fix PHP 5.6 Closure::bind()
+        if (PHP_MAJOR_VERSION < 7) {
+            $parameters[] = $this;
         }
 
-        return call_user_func($this->callback, $args);
+        return call_user_func_array($this->callback, $parameters);
     }
 }

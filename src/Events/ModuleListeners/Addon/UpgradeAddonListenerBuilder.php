@@ -23,13 +23,20 @@ class UpgradeAddonListenerBuilder extends AbstractAddonListener
             }
         }
 
-        return CallbackModuleListener::createCallback('upgrade', function($vars) use ($versionsHandlers) {
+        return CallbackModuleListener::createCallback('upgrade', function ($vars, $context = null) use($versionsHandlers) {
+            /** @var CallbackModuleListener $self */
+            $self = $this;
+            // Fix PHP 5.6 Closure::bind()
+            if (PHP_MAJOR_VERSION < 7) {
+                $self = $context;
+            }
+
             // Prepare version string
             $previousVersion = !empty($vars['version']) ? $vars['version'] : '0';
             $previousVersion = self::clearVersionString($previousVersion);
 
-            /** @var CallbackModuleListener $this */
-            $currentVersion = $this->getModule()->getOriginalConfig('version', '0');
+
+            $currentVersion = $self->getModule()->getOriginalConfig('version', '0');
             $currentVersion = self::clearVersionString($currentVersion);
 
             switch (version_compare($previousVersion, $currentVersion)) {
@@ -68,6 +75,7 @@ class UpgradeAddonListenerBuilder extends AbstractAddonListener
 
             // Apply the changes
             foreach ($versionsHandlers as $version => $handler) {
+                $handler = \Closure::bind($handler, $self);
 
                 /** @var \Closure $handler */
 
@@ -79,7 +87,7 @@ class UpgradeAddonListenerBuilder extends AbstractAddonListener
                         // <= current
                         in_array(version_compare((string) $version, $currentVersion), [-1, 0], true)
                     ) {
-                        $handler->call($this, $type, $previousVersion, $currentVersion);
+                        $handler($type, $previousVersion, $currentVersion, $self);
                     }
                 } else {
                     if (
@@ -88,20 +96,20 @@ class UpgradeAddonListenerBuilder extends AbstractAddonListener
                         // >= current
                         in_array(version_compare((string) $version, $currentVersion), [0, 1], true)
                     ) {
-                        $handler->call($this, $type, $previousVersion, $currentVersion);
+                        $handler($type, $previousVersion, $currentVersion, $self);
                     }
                 }
             }
 
             /** @noinspection PhpParamsInspection */
-            self::updateTrackedVersion($this->getModule(), $currentVersion);
+            self::updateTrackedVersion($self->getModule(), $currentVersion);
         });
     }
 
-    protected static function clearVersionString($version)
+    public static function clearVersionString($version)
     {
         $version = (string) $version;
-        $version = preg_replace('@<(\w+)\b.*?>.*?</\1>@si', '', $version);
+        $version = preg_replace('~<(\w+)\b.*?>.*?</\1>~si', '', $version);
         $version = trim($version);
 
         return $version;

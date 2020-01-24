@@ -6,6 +6,7 @@ use Axelarge\ArrayTools\Arr;
 use WHMCS\Module\Framework\ConfigBuilder\AddonConfigBuilder;
 use WHMCS\Module\Framework\Events\ModuleListeners\Addon\ActivateAddonListenerBuilder;
 use WHMCS\Module\Framework\Events\ModuleListeners\Addon\UpgradeAddonListenerBuilder;
+use WHMCS\Module\Framework\PageHooks\Admin\CustomAdminPageHook;
 
 class Addon extends AbstractModule
 {
@@ -75,18 +76,20 @@ class Addon extends AbstractModule
 
     public function onUpgradeListeners(array $versionsListeners)
     {
-        $listener = UpgradeAddonListenerBuilder::build($versionsListeners);
-        $this->registerModuleListeners([$listener]);
+        if (!$this->initialized) {
+            $listener = UpgradeAddonListenerBuilder::build($versionsListeners);
+            $this->registerModuleListeners([$listener]);
 
-        // Subscribe to activation too
-        $self = $this;
-        $this->onActivateListener(function() use (&$listener, &$self) {
+            // Subscribe to activation too
+            $self = $this;
+            $this->onActivateListener(function () use (&$listener, &$self) {
 
-            $listener->callHandler([
-                // Emulate arguments
-                'version' => UpgradeAddonListenerBuilder::getAddonTrackedVersion($self) // kinda previous
-            ]);
-        });
+                $listener->callHandler([
+                    // Emulate arguments
+                    'version' => UpgradeAddonListenerBuilder::getAddonTrackedVersion($self) // kinda previous
+                ]);
+            });
+        }
 
         return $this;
     }
