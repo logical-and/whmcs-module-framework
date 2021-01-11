@@ -4,9 +4,15 @@ namespace WHMCS\Module\Framework;
 
 use Axelarge\ArrayTools\Arr;
 use ErrorException;
-use /** @noinspection PhpUndefinedClassInspection */
+use
+    /** @noinspection PhpUndefinedClassInspection */
     /** @noinspection PhpUndefinedNamespaceInspection */
     Illuminate\Database\Capsule\Manager;
+
+use
+    /** @noinspection PhpUndefinedClassInspection */
+    /** @noinspection PhpUndefinedNamespaceInspection */
+    Illuminate\Database\Events\StatementPrepared;
 use Symfony\Component\HttpFoundation\Request;
 
 class Helper
@@ -97,8 +103,11 @@ class Helper
         if (empty(self::$connections[$fetchMode])) {
             /** @noinspection PhpUndefinedClassInspection */
             $conn = self::$connections[$fetchMode] = ConnectionClone::constructClone(Manager::connection());
+            /** @noinspection PhpUndefinedClassInspection */
             /** @noinspection PhpUndefinedMethodInspection */
-            $conn->setFetchMode($fetchMode);
+            $conn->getEventDispatcher()->listen(StatementPrepared::class, function($event) use ($fetchMode) {
+                $event->statement->setFetchMode($fetchMode);
+            });
         }
 
         return self::$connections[$fetchMode];
